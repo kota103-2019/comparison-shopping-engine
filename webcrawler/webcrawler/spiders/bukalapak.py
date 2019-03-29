@@ -8,10 +8,13 @@ class BukalapakSpider(scrapy.Spider):
     start_urls = ['https://www.bukalapak.com/c/komputer/laptop?page=1']
 
     def parse(self, response):
-        # for li in response.css('li.col-12--2'):
-        # print(li.css('a::attr(href)').get())
-
         print('current page : ' + response.url)
+        product_links = response.css('div.basic-products ul.products li.col-12--2 div.product-media a::attr(href)').getall()
+        for product_link in product_links:
+            yield{
+                'link': 'https://www.bukalapak.com' + product_link,
+            }
+
         next_page_object = response.css('a.next_page::attr(href)').get()
         if(next_page_object is not None):
             next_page = str(next_page_object)
