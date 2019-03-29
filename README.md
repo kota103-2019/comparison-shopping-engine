@@ -1,6 +1,8 @@
 # Comparison Shopping Engine
 
 Final Assignment Project - Comparing product from different online marketplace
+- The Web App
+- The Crawling App
 
 ## Getting Started
 
@@ -8,20 +10,26 @@ How to run it into your computer
 
 ### Prerequisites
 
-Install requirements
+Install Python
 
-```
-Give examples
-```
+- Python 3.7
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+Install dependencies using pip
 
 ```
-Give the example
+pip install -r requirements.txt
+```
+or
+```
+python -m pip install -r requirements.txt
+```
+
+### How To Run The Spider
+
+```
+scrapy crawl spidername
 ```
 
 ## Built With
@@ -30,6 +38,6 @@ Give the example
 
 ## Authors
 
-* **Alpin Jestinera** - *Initial work* - [alpinj](https://github.com/alpinj)
+* **KoTA-103 2019** - [kota103-2019](https://github.com/kota103-2019)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/kota103-2019/comparison-shopping-engine/graphs/contributors) who participated in this project.
