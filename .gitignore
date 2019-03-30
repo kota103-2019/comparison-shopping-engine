@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# CUSTOM IGNORE
+# result .json file
+result.json

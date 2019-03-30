@@ -6,6 +6,7 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 from scrapy.exporters import JsonItemExporter
+import json
 
 class JsonPipeline(object):
     def __init__(self):
@@ -18,5 +19,6 @@ class JsonPipeline(object):
         self.file.close()
 
     def process_item(self, item, spider):
+        # line = json.dumps(dict(item)) + "\n"
         self.exporter.export_item(item)
         return item
