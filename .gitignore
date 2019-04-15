@@ -105,4 +105,5 @@ venv.bak/
 
 # CUSTOM IGNORE
 # result .json file
+result_backup.json
 result.json
