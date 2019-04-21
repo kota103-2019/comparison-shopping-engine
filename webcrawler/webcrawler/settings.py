@@ -66,7 +66,14 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'webcrawler.pipelines.JsonPipeline': 300,
+   # 'webcrawler.pipelines.JsonPipeline': 300,
+}
+
+#Feed Exporters
+FEED_URI = 'tmp/export.csv'
+FEED_FORMAT = 'csv'
+FEED_STORAGE_BASE = {
+   'csv': 'scrapy.exporters.CsvItemExporter'
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

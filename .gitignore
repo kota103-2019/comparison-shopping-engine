@@ -107,3 +107,5 @@ venv.bak/
 # result .json file
 result_backup.json
 result.json
+
+tmp/
