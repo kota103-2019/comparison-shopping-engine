@@ -7,26 +7,15 @@ class BukalapakSpider(scrapy.Spider):
     name = 'bukalapak'
     allowed_domains = ['www.bukalapak.com']
     start_urls = [
-        # 'https://www.bukalapak.com/c/komputer/laptop?page=1'
-        "https://www.bukalapak.com/c/komputer?from=category_home&page=1&search%5Bkeywords%5D="
+        "https://www.bukalapak.com/c/komputer?from=category_home&page=1&search%5Bkeywords%5D=",
+        "https://www.bukalapak.com/c/perlengkapan-kantor?from=category_home&page=1&search%5Bkeywords%5D="
         ]
 
     def parse(self, response):
-        product_links = response.css('div.basic-products ul.products li.col-12--2 article.product-display div.product-description')
-        for product_detail in product_links:
-            product_links = 'https://www.bukalapak.com' + product_detail.css('a::attr(href)').get()
-            # yield{
-            #     'product_title' : product_detail.css('a::attr(title)').get(),
-            #     'product_link': 'https://www.bukalapak.com' + product_detail.css('a::attr(href)').get(),
-            #     'currency' : product_detail.css('div.product-price span.currency::text').get(),
-            #     'price' : product_detail.css('div.product-price span.amount::text').get(),
-            #     'seller_username' : product_detail.css('div.product-seller h5.user__name a::text').get(),
-            #     'seller_link' : 'https://www.bukalapak.com' + product_detail.css('div.product-seller h5.user__name a::attr(href)').get(),
-            #     'seller_city' : product_detail.css('div.product-seller span.user-city__txt::text').get(),
-            #     'feedback_summary' : product_detail.css('div.product-seller a.user-feedback-summary::text').get(),
-            #     'feedback_link' : 'https://www.bukalapak.com' + product_detail.css('div.product-seller a.user-feedback-summary::attr(href)').get(),
-            # }
-            yield response.follow(product_links, callback=self.parse_product)
+        products = response.css('div.basic-products ul.products li.col-12--2 article.product-display div.product-description')
+        for product_detail in products:
+            product_link = 'https://www.bukalapak.com' + product_detail.css('a::attr(href)').get()
+            yield response.follow(product_link, callback=self.parse_product)
 
         next_page_object = response.css('a.next_page::attr(href)').get()
         if(next_page_object is not None):
@@ -47,9 +36,11 @@ class BukalapakSpider(scrapy.Spider):
         if(is_discount):
             product_object['price_original'] = str(response.css('div.c-product-detail-price span.c-product-detail-price__original span.amount::text').get()).replace(".","")
         product_object['rating'] = response.css('span.c-product-rating__value.is-hidden::text').get()
-        product_object['kondisi'] = response.css('dd.c-deflist__value.qa-pd-condition-value span.c-label::text').get()
+        product_object['condition'] = response.css('dd.c-deflist__value.qa-pd-condition-value span.c-label::text').get()
         product_object['seller'] = response.css('a.c-user-identification__name.qa-seller-name::text').get()
         product_object['seller_url'] = 'https://www.bukalapak.com' + response.css('a.c-user-identification__name.qa-seller-name::attr(href)').get()
         product_object['seller_location'] = response.css("span.c-user-identification-location__txt.qa-seller-location a::text").get()
-        
+        product_object['category'] = str(response.css("dd.c-deflist__value.qa-pd-category-value.qa-pd-category::text").get()).replace("\n","")
+        product_object['description'] = response.css("div.qa-pd-description p").get()
+
         yield product_object

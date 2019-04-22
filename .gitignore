@@ -108,4 +108,8 @@ venv.bak/
 result_backup.json
 result.json
 
+#result from feed exporters
 tmp/
+
+#.dot file pyreverse
+*.dot
