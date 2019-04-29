@@ -22,5 +22,12 @@ class TokopediaSpider(scrapy.Spider):
         product_object['url'] = response.url
         product_object['title'] = response.css("h1.rvm-product-title span::text").get()
         product_object['price_final'] = response.css("div.rvm-price-holder div.rvm-price input::attr(value)").get()
+        product_object['rating'] = response.css("div.rate-accuracy div.reviewsummary-rating-score::text").get()
+        product_object['condition'] = response.css("div.rvm-product-info div.rvm-product-info--item_value::text").get(1)
+        product_object['seller'] = response.css("div.rvm-merchat-name span.shop-name::text").get()
+        product_object['seller_url'] = response.css("div.rvm-merchat-name a::attr(href)").get()
+        product_object['seller_location'] = response.css("div.rvm-merchat-city span::text").get()
+        # product_object['category'] = 
+        # product_object['description'] = 
 
         yield product_object
