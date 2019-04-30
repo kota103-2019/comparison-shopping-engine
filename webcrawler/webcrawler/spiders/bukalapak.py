@@ -25,9 +25,11 @@ class BukalapakSpider(scrapy.Spider):
     
     def parse_product(self, response):
         product_object = ProductItem()
+        product_object['online_marketplace'] = self.name
         product_object['time_taken'] = datetime.datetime.now()
         product_object['url'] = response.url
         product_object['title'] = response.css('h1.c-product-detail__name.qa-pd-name::text').get()
+        product_object['image_url'] = response.css("div.c-product-image-gallery picture img::attr(src)").get()
         product_object['price_final'] = response.css('div.c-product-detail-price::attr(data-reduced-price)').get()
         is_installment = response.css('div.c-product-detail-price::attr(data-installment)').get() == 'true'
         is_discount = response.css('div.c-product-detail-price span.c-product-detail-price__original span.amount::text').get() is not None

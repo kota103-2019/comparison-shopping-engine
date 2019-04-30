@@ -10,9 +10,11 @@ import scrapy
 
 class ProductItem(scrapy.Item):
     # define the fields for your item here like:
+    online_marketplace = scrapy.Field()
     time_taken = scrapy.Field()
     title = scrapy.Field()
     url = scrapy.Field()
+    image_url = scrapy.Field()
     price_final = scrapy.Field()    
     price_original = scrapy.Field()
     price_installment = scrapy.Field()

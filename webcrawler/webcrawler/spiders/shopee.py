@@ -6,7 +6,7 @@ class ShopeeSpider(scrapy.Spider):
     name = 'shopee'
     allowed_domains = ['www.shopee.com']
     start_urls = [
-        'http://www.shopee.com/'
+        'https://shopee.co.id/Komputer-Aksesoris-cat.134?page=0&sortBy=ctime'
         ]
 
     def parse(self, response):
