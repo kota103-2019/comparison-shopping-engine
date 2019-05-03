@@ -66,7 +66,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   # 'webcrawler.pipelines.JsonPipeline': 300,
+   # 'webcrawler.pipelines.JsonPipeline': 100,
 }
 
 #Feed Exporters
