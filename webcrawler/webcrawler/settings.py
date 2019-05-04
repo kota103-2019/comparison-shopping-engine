@@ -70,11 +70,11 @@ ITEM_PIPELINES = {
 }
 
 #Feed Exporters
-FEED_URI = 'tmp/export.csv'
-FEED_FORMAT = 'csv'
-FEED_STORAGE_BASE = {
-   'csv': 'scrapy.exporters.CsvItemExporter'
-}
+# FEED_URI = 'tmp/export.csv'
+# FEED_FORMAT = 'csv'
+# FEED_STORAGE_BASE = {
+#    'csv': 'scrapy.exporters.CsvItemExporter'
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -96,3 +96,19 @@ AUTOTHROTTLE_DEBUG = False
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+#Scrapy-Splash settings
+
+SPLASH_URL = "http://192.168.99.100:8050"
+
+DOWNLOADER_MIDDLEWARES = {
+   'scrapy_splash.SplashCookiesMiddleware': 723,
+   'scrapy_splash.SplashMiddleware': 725,
+   'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
+
+SPIDER_MIDDLEWARES = {
+   'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
+
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'

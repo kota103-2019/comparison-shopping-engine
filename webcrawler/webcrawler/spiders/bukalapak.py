@@ -15,13 +15,13 @@ class BukalapakSpider(scrapy.Spider):
         products = response.css('div.basic-products ul.products li.col-12--2 article.product-display div.product-description')
         for product_detail in products:
             product_link = 'https://www.bukalapak.com' + product_detail.css('a::attr(href)').get()
-            yield response.follow(product_link, callback=self.parse_product)
+            yield scrapy.Request(url=product_link, callback=self.parse_product)
 
         next_page_object = response.css('a.next_page::attr(href)').get()
         if(next_page_object is not None):
             next_page = str(next_page_object)
             next_page = 'https://www.bukalapak.com' + next_page
-            yield response.follow(next_page, callback=self.parse)
+            yield scrapy.Request(url=next_page, callback=self.parse)
     
     def parse_product(self, response):
         product_object = ProductItem()
