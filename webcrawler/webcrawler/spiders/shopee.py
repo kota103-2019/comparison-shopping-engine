@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import scrapy
+import scrapy, datetime
 
+from webcrawler.items import ProductItem
 
 class ShopeeSpider(scrapy.Spider):
     name = 'shopee'
@@ -26,7 +27,6 @@ class ShopeeSpider(scrapy.Spider):
         product_object['online_marketplace'] = self.name
         product_object['time_taken'] = datetime.datetime.now()
         product_object['url'] = response.url
-        product_object['title'] = response
         product_object['title'] = response
         product_object['image_url'] = response
         product_object['price_final'] = response

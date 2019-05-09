@@ -70,11 +70,11 @@ ITEM_PIPELINES = {
 }
 
 #Feed Exporters
-# FEED_URI = 'tmp/export.csv'
-# FEED_FORMAT = 'csv'
-# FEED_STORAGE_BASE = {
-#    'csv': 'scrapy.exporters.CsvItemExporter'
-# }
+FEED_URI = 'tmp/export.csv'
+FEED_FORMAT = 'csv'
+FEED_STORAGE_BASE = {
+   'csv': 'scrapy.exporters.CsvItemExporter'
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

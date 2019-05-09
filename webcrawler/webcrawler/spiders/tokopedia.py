@@ -35,7 +35,7 @@ class TokopediaSpider(scrapy.Spider):
         product_object['seller'] = response.css("div.rvm-merchat-name span.shop-name::text").get()
         product_object['seller_url'] = response.css("div.rvm-merchat-name a::attr(href)").get()
         product_object['seller_location'] = response.css("div.rvm-merchat-city span::text").get()
-        # product_object['category'] = 
+        # product_object['category'] = response
         product_object['description'] = response.css("div#info").get()
 
         yield product_object
