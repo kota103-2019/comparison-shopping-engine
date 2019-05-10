@@ -14,7 +14,16 @@ class JdIdSpider(scrapy.Spider):
         products = response.css('div.item div.p-desc')
         for product_detail in products:
             product_link = response.urljoin(product_detail.css('a::attr(href)').get())
-            yield scrapy.Request(url=product_link, callback=self.parse_product)
+            yield scrapy.Request(url=product_link, callback=self.parse, meta={
+                'splash':{
+                    'args':{
+                        'html':1,
+                        # 'proxy':'http://10.10.0.6:3128',
+                    },
+
+                    'endpoint':'render.html',
+                }
+            })
         
         next_page_object = response.urljoin(response.css('div.pagination a.p-next::attr(href)').get())
         if(next_page_object is not None):
@@ -26,13 +35,21 @@ class JdIdSpider(scrapy.Spider):
         product_object['online_marketplace'] = self.name
         product_object['time_taken'] = datetime.datetime.now()
         product_object['url'] = response.url
-        product_object['title'] = response
-        product_object['image_url'] = response
-        product_object['price_final'] = response
-        product_object['rating'] = response
-        product_object['condition'] = response
-        product_object['seller'] = response
-        product_object['seller_url'] = response
-        product_object['seller_location'] = response
-        product_object['category'] = response
-        product_object['description'] = response
+        is_jdid_product = response.css("div#summary h1.tit span::text").get() == 'JD.id'
+        if(is_jdid_product):
+            product_object['title'] = response.css("div#summary h1.tit span::text")[1].get()
+        else:
+            product_object['title'] = response.css("div#summary h1.tit span::text").get()
+        product_object['image_url'] = response.urljoin(response.css("div.big-img-cntnr img::attr(src").get())
+        product_object['price_final'] = response.css("div.price div.dd span.sale-price::text").get()
+        product_object['price_original'] = response.css("div.lastprice div.dd::text").get()
+        product_object['rating'] = response.css("div.scores span.number::text").get()
+        product_object['condition'] = "Baru"
+        if(is_jdid_product):
+            product_object['seller'] = "JD.id"
+            product_object['seller_url'] = "JD.id"
+            product_object['seller_location'] = "JD.id"
+        else:
+            pass
+        # product_object['category'] = response
+        # product_object['description'] = response
