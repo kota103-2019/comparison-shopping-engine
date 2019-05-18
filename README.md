@@ -25,16 +25,25 @@ or
 ```
 python -m pip install -r requirements.txt
 ```
-
 ### How To Run The Spider
 
 ```
 scrapy crawl spidername
 ```
 
+### How To Run Django Server
+
+Open terminal
+
+```
+cd comprisonweb
+python manage.py runserver
+```
+
 ## Built With
 
 * [Scrapy](https://scrapy.org/) - For Crawling and Scraping
+* [Django](https://www.djangoproject.com/) - For Website Development
 
 ## Authors
 
