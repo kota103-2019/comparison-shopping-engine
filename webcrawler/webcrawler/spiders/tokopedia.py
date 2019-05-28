@@ -88,11 +88,13 @@ class TokopediaSpider(scrapy.Spider):
         # product_object['category'] = response
         
         #description in string HTML format
-        product_object['description'] = response.css("div#info").get()
+        # product_object['description'] = response.css("div#info").get()
+        
+        #description in string format
         #get all strings in response tag
-        # description_list = response.css("div#info::text").getall()
+        description_list = response.css("div#info::text").getall()
         #join all the strings
-        # description = ' '.join(description_list)
-        # product_object['description'] = description
+        description = ' '.join(description_list)
+        product_object['description'] = description
 
         yield product_object

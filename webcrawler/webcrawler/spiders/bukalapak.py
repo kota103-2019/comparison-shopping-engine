@@ -45,7 +45,7 @@ class BukalapakSpider(scrapy.Spider):
         #convert into float format
         product_object['price_final'] = float(price)
 
-        #stock data in string format '\n> 50 stok\n'
+        #stock data in string format ex.'\n> 50 stok\n'
         #replace() for removing '\n'
         product_object['stock'] = response.css('div.qa-pd-stock strong span::text').get().replace('\n','')
         
@@ -93,11 +93,13 @@ class BukalapakSpider(scrapy.Spider):
         # product_object['category'] = str(response.css("dd.c-deflist__value.qa-pd-category-value.qa-pd-category::text").get()).replace("\n","")
         
         #description in string HTML format
-        product_object['description'] = response.css("div.qa-pd-description p").get()
+        # product_object['description'] = response.css("div.qa-pd-description p").get()
+        
+        #description in string format
         #get all strings in response tag
-        # description_list = response.css("div.qa-pd-description p::text").getall()
+        description_list = response.css("div.qa-pd-description p::text").getall()
         #join all the strings
-        # description = ' '.join(description_list)
-        # product_object['description'] = description
+        description = ' '.join(description_list)
+        product_object['description'] = description
 
         yield product_object
