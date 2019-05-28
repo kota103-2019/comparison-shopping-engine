@@ -40,7 +40,7 @@ class BukalapakSpider(scrapy.Spider):
         
         #get price data in string '1234567'
         price = response.css('div.c-product-detail-price::attr(data-reduced-price)').get()
-        #convert into currency format 'Rp 1.234.567'
+        #convert into currency format 'Rp1.234.567'
         # price_formatted = f'Rp{float(price):,.0f}'.replace(',','.')
         #convert into float format
         product_object['price_final'] = float(price)
@@ -61,8 +61,8 @@ class BukalapakSpider(scrapy.Spider):
             #get discount data in string '1%'
             discount = response.css('div.c-badge__content::text').get()
             #convert into float format  '1.0'
-            discount_formatted = float(discount.replace('%',''))
-            product_object['discount'] = discount_formatted
+            discount = float(discount.replace('%',''))
+            product_object['discount'] = discount
         
         #get rating data in string '5.0'
         rating = response.css('span.c-product-rating__value.is-hidden::text').get()
@@ -94,5 +94,10 @@ class BukalapakSpider(scrapy.Spider):
         
         #description in string HTML format
         product_object['description'] = response.css("div.qa-pd-description p").get()
+        #get all strings in response tag
+        # description_list = response.css("div.qa-pd-description p::text").getall()
+        #join all the strings
+        # description = ' '.join(description_list)
+        # product_object['description'] = description
 
         yield product_object
