@@ -25,5 +25,6 @@ class ProductItem(scrapy.Item):
     seller = scrapy.Field()
     seller_url = scrapy.Field()
     seller_location = scrapy.Field()
+    last_activity = scrapy.Field()
     category = scrapy.Field()
     description = scrapy.Field()
