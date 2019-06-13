@@ -28,6 +28,7 @@ python -m pip install -r requirements.txt
 ### How To Run The Spider
 
 ```
+cd webcrawler
 scrapy crawl spidername
 ```
 
