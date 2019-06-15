@@ -22,5 +22,5 @@ def compare():
     return render_template('category.html')
 
 @app.route("/product-detail/<id>")
-def compare():
+def detail(id):
     return render_template('product-detail.html')
