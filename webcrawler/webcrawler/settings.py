@@ -97,7 +97,8 @@ AUTOTHROTTLE_DEBUG = False
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-#Scrapy-Splash settings
+
+#SCRAPY-SPLASH SETTINGS
 
 SPLASH_URL = "http://192.168.99.100:8050"
 
