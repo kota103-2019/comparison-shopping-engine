@@ -22,10 +22,11 @@ def compare():
     return render_template('category.html')
 
 # @app.route("/product-detail/<id>")
-@app.route("/product-detail", methods = ['POST','GET'])
-def productdetail():
+@app.route("/product_detail", methods = ['GET','POST'])
+def product_detail():
+    Pokemons =["Pikachu", "Charizard", "Squirtle", "Jigglypuff",
+           "Bulbasaur", "Gengar", "Charmander", "Mew", "Lugia", "Gyarados"]
     if request.method == 'POST':
-        productdetail = request.form
-        return render_template('product-detail.html', productdetail = productdetail)
+        return render_template('product_detail.html',len=5, Pokemons = Pokemons)
 # def detail(id):
 #     return render_template('product-detail.html')
