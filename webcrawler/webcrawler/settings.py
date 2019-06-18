@@ -67,14 +67,15 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    # 'webcrawler.pipelines.JsonPipeline': 100,
+   'webcrawler.pipelines.MongoDBPipeline' : 100,
 }
 
 #Feed Exporters
-FEED_URI = 'tmp/export.csv'
-FEED_FORMAT = 'csv'
-FEED_STORAGE_BASE = {
-   'csv': 'scrapy.exporters.CsvItemExporter'
-}
+# FEED_URI = 'tmp/export.csv'
+# FEED_FORMAT = 'csv'
+# FEED_STORAGE_BASE = {
+#    'csv': 'scrapy.exporters.CsvItemExporter'
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -113,3 +114,10 @@ SPIDER_MIDDLEWARES = {
 }
 
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+
+#MONGO DB CONFIGURATION
+
+MONGODB_SERVER = 'localhost'
+MONGODB_PORT = 27017
+MONGODB_DATABASE = 'comparison-shopping-engine'
+MONGODB_COLLECTION = 'products'
