@@ -1,6 +1,6 @@
 from flask import render_template, url_for, request, session, redirect
 from comparison import app
-#from comparison.models import 
+#from comparison.models import
 
 @app.route("/")
 def index():
@@ -21,6 +21,11 @@ def searchCateg():
 def compare():
     return render_template('category.html')
 
-@app.route("/product-detail/<id>")
-def detail(id):
-    return render_template('product-detail.html')
+# @app.route("/product-detail/<id>")
+@app.route("/product-detail", methods = ['POST','GET'])
+def productdetail():
+    if request.method == 'POST':
+        productdetail = request.form
+        return render_template('product-detail.html', productdetail = productdetail)
+# def detail(id):
+#     return render_template('product-detail.html')
