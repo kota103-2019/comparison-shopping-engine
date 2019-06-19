@@ -19,9 +19,11 @@ def search():
 def searchCateg():
     return render_template('category.html')
 
-@app.route("/compare")
+@app.route("/compare", methods = ['GET','POST'])
 def compare():
-    return render_template('category.html')
+    jml = 4
+    if request.method == 'GET':
+        return render_template('compare.html', jml=jml)
 
 # @app.route("/product-detail/<id>")
 @app.route("/product_detail", methods = ['GET','POST'])

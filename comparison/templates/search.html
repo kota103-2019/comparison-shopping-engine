@@ -36,8 +36,8 @@
     <form class="" action="#">
       <input type="submit" name="reset" value="Reset">
     </form>
-    <form class="" action="#">
-      <input type="submit" name="compare" value="Bandingkan">
+    <form class="" action="http://localhost:5000/compare">
+      <input method="POST" type="submit" name="compare" value="Bandingkan">
     </form>
   </div>
 
@@ -78,7 +78,7 @@
           <p>Rp 2.500.000</p>
           <p>Rp Shopee</p>
           <form method="POST" action="#"><button class="button button2">Kunjungi Toko</button></form><br>
-          <form method="POST" action="http://localhost:5000/product_detail"><button type="submit" class="button button3">Lihat Detail</button></form><br>
+          <form method="GET" action="http://localhost:5000/product_detail"><button type="submit" class="button button3">Lihat Detail</button></form><br>
           <!-- <p><a href="{{ url_for('product_detail') }}">Lihat Produk</a></p> -->
           <label class="limit-checkbox">Bandingkan
             <input type="checkbox">
