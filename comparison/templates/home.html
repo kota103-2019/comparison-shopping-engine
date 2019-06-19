@@ -52,8 +52,10 @@
       </div>
     </div>
     <div class="rowcontain">
+
+
     <div class="cardcontainer">
-      {%for i in range(0,5)%}
+      {%for i in range(0,jmlprod)%}
       <div class="card-produk">
         <img src="hp.jpg" alt="Avatar" style="width:100%">
         <div class="cardcontentcontainer">
@@ -64,8 +66,8 @@
           <form method="POST" action="#"><button class="button button2">Kunjungi Toko</button></form><br>
           <form method="POST" action="http://localhost:5000/product_detail"><button type="submit" class="button button3">Lihat Detail</button></form><br>
           <!-- <p><a href="{{ url_for('product_detail') }}">Lihat Produk</a></p> -->
-          <label class="">Bandingkan
-            <input type="checkbox" checked="checked">
+          <label class="limit-checkbox">Bandingkan
+            <input type="checkbox">
             <span class="checkmark"></span>
           </label>
         </div>
@@ -75,6 +77,16 @@
     </div>
   </div>
 </div>
+<script>
+
+  $('input[type=checkbox]').on('change', function (e) {
+    if ($('input[type=checkbox]:checked').length > 3) {
+        $(this).prop('checked', false);
+        alert("allowed only 3");
+    }
+});
+
+</script>
 </html>
 
 {% endblock content %}

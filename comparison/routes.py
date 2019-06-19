@@ -6,12 +6,14 @@ from comparison import app
 def index():
     #kota = mongo.db.kota.find({"idProv": 11})
     #str = "hello "
-    return render_template('home.html')
+    jmlprod = 9
+    return render_template('home.html', jmlprod = jmlprod)
 
-@app.route("/search/<keyword>")
-def search(keyword):
-    #str = "hello "+keyword
-    return render_template('search.html')
+@app.route("/search", methods = ['GET','POST'])
+def search():
+    if request.method == 'POST':
+        kataKunci = request.form['searchbox']
+    return render_template('search.html',kataKunci = kataKunci)
 
 @app.route("/categ")
 def searchCateg():
@@ -24,9 +26,7 @@ def compare():
 # @app.route("/product-detail/<id>")
 @app.route("/product_detail", methods = ['GET','POST'])
 def product_detail():
-    Pokemons =["Pikachu", "Charizard", "Squirtle", "Jigglypuff",
-           "Bulbasaur", "Gengar", "Charmander", "Mew", "Lugia", "Gyarados"]
     if request.method == 'POST':
-        return render_template('product_detail.html',len=5, Pokemons = Pokemons)
+        return render_template('product_detail.html')
 # def detail(id):
 #     return render_template('product-detail.html')
