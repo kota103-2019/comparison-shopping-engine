@@ -6,14 +6,14 @@ from comparison import app
 def index():
     #kota = mongo.db.kota.find({"idProv": 11})
     #str = "hello "
-    jmlprod = 9
-    return render_template('home.html', jmlprod = jmlprod)
+    return render_template('home.html')
 
 @app.route("/search", methods = ['GET','POST'])
 def search():
+    jmlprod = 9
     if request.method == 'POST':
         kataKunci = request.form['searchbox']
-    return render_template('search.html',kataKunci = kataKunci)
+    return render_template('search.html', jmlprod = jmlprod, kataKunci = kataKunci)
 
 @app.route("/categ")
 def searchCateg():
