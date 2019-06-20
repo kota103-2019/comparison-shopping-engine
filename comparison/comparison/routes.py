@@ -18,8 +18,8 @@ def search():
         kataKunci = request.form['searchbox']
     return render_template('search.html', jmlprod = jmlprod, kataKunci = kataKunci)
 
-@app.route("/search/<keyword>")
-def search(keyword):
+@app.route("/cari/<keyword>")
+def cari(keyword):
         pencarian.kataKunci = keyword
         listOfProduk = pencarian.mencariProdukByKataKunci()
         output = []
