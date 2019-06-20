@@ -1,6 +1,8 @@
-from flask import render_template, url_for, request, session, redirect
+from flask import render_template, url_for, request, session, redirect, jsonify
 from comparison import app
-#from comparison.models import
+from comparison.models import MainPencarian
+
+pencarian = MainPencarian()
 
 @app.route("/")
 def index():
@@ -10,8 +12,21 @@ def index():
 
 @app.route("/search/<keyword>")
 def search(keyword):
-    #str = "hello "+keyword
-    return render_template('search.html')
+        pencarian.kataKunci = keyword
+        listOfProduk = pencarian.mencariProdukByKataKunci()
+        output = []
+        for i in listOfProduk:
+                output.append({'id':i['_id'],'Nama Produk':i['title'], 'Harga Awal':i['price_final'], 'img_url' : i['image_url']
+                , 'Kondisi Barang' : i['condition'], 'Lokasi Toko' : i['seller_location'], 'Online Marketplace' : i['online_marketplace']
+                , 'Nama Toko': i['seller'] , 'url' : i['url'] 
+                })
+        if len(output) < 1 :
+                return 'Tidak ditemukan produk yang dimaksud'
+        else:
+                return jsonify({'List Produk':output})
+
+
+    #return render_template('search.html')
 
 @app.route("/categ")
 def searchCateg():
