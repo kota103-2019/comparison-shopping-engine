@@ -1,5 +1,27 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<div style="padding:16px">
+  <p>Home > Handphone & Tablet > Handphone</p>
+  <h3>< Hasil Bandingkan : Samsung Galaxy A20</h3>
+</div>
+<div class="rowcontainer">
+  {%for i in range(0,jml)%}
+  <div class="left">
+    <h3>Nama Produk</h3> : Nama Produk
+    <h4>Harga Produk</h4> : Rp 1.000.000
+    <h4>Last Update</h4> : 10 Juni 2019, 00:05
+    <h4>Kondisi Produk</h4> : Baru
+    <h4>Diskon</h4> : 0%
+    <h4>Terjual</h4> : 12
+    <h4>Rating</h4> : 4.5/5
+    <h4>Jumlah Rating</h4> : 10
+    <h4>Penjual</h4> : Toko HP Budisanto
+    <h4>Lokasi Toko</h4> : Batam
+    <h4>Toko Online</h4> : Lazada
+  </div>
+  {%endfor%}
+</div>
+
 
 {% endblock content %}

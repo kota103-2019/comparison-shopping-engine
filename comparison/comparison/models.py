@@ -1,3 +1,4 @@
+
 import re
 from .extensions import mongo
 
@@ -22,7 +23,6 @@ class MainPencarian:
 
 #class Produk:
 #    def __init__(self):
-
 
 class InformasiHarga:
     def __init__(self):
