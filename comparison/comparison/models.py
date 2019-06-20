@@ -1,13 +1,28 @@
 
-class KataKunci:
-    def __init__(self, katakunci):
-        self.katakunci = katakunci
+import re
+from .extensions import mongo
 
-class OnlineMarketplace:
-    def __init__(self, idOnlineMarketplace, namaMarketplace, alamatWebsite):
-        self.idOnlineMarketplace = idOnlineMarketplace
-        self.namaMarketplace = namaMarketplace
-        self.alamatWebsite = alamatWebsite
+class MainPencarian:
+    def __init__(self):
+        self.kataKunci = ""
+        self.listIdProduk = []
+        self.hargaMin = 0
+        self.hargaMax = None
+
+    def mencariProdukByKataKunci(self):
+        key = self.kataKunci
+        
+        reString = ".*%s.*" % key # string untuk menampung query like untuk penggunaan regex
+        rgx = re.compile(reString, re.IGNORECASE) # mengcompile regex dengan menginore penggunaan Upper & Lower case
+        
+        #data = mongo.db.produk.find({"price_final":{"$gte":self.hargaMin}},{"title": rgx })
+        data = mongo.db.produk.find({"title": rgx })
+        #if data.retrieved >= 0 :
+        return data
+
+
+#class Produk:
+#    def __init__(self):
 
 class InformasiHarga:
     def __init__(self):
