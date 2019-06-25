@@ -75,7 +75,7 @@
         <div class="cardcontentcontainer">
           <h4><b>{{i.namaLengkapProduk}}</b></h4>
           <p>{% if i.kondisiBarang == 1 %} Baru {% else %} Bekas {% endif %} | {{i.idKota}}</p>
-          <p>Rp. {{i.hargaAwalProduk}}</p>
+          <p>{{ "Rp. %.2f"|format(i.hargaAwalProduk)}}</p>
           <p>{{i.idOnlineMarketplace}}</p>
           <form method="POST" action="#"><button class="button button2">Kunjungi Toko</button></form><br>
           <form method="GET" action="http://localhost:5000/product_detail"><button type="submit" class="button button3">Lihat Detail</button></form><br>
