@@ -16,23 +16,17 @@ def search():
     jmlprod = 9
     if request.method == 'POST':
         kataKunci = request.form['searchbox']
-    return render_template('search.html', jmlprod = jmlprod, kataKunci = kataKunci)
+        pencarian.kataKunci = kataKunci
+        listOfProduk = pencarian.mencariProdukByKataKunci()
+        jmlprod = len(listOfProduk)
+    return render_template('search.html', jmlprod = jmlprod, kataKunci = kataKunci, listOfProduk = listOfProduk)
 
 @app.route("/cari/<keyword>")
 def cari(keyword):
         pencarian.kataKunci = keyword
         listOfProduk = pencarian.mencariProdukByKataKunci()
-        output = []
-        for i in listOfProduk:
-                output.append({'id':i['_id'],'Nama Produk':i['title'], 'Harga Awal':i['price_final'], 'img_url' : i['image_url']
-                , 'Kondisi Barang' : i['condition'], 'Lokasi Toko' : i['seller_location'], 'Online Marketplace' : i['online_marketplace']
-                , 'Nama Toko': i['seller'] , 'url' : i['url'] 
-                })
-        if len(output) < 1 :
-                return 'Tidak ditemukan produk yang dimaksud'
-        else:
-                return jsonify({'List Produk':output})
-
+        print(listOfProduk[2].namaLengkapProduk)
+        return listOfProduk[2].namaLengkapProduk
 
 
 @app.route("/categ")
