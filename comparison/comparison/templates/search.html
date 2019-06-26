@@ -69,14 +69,14 @@
 
 
     <div class="cardcontainer">
-      {%for i in range(0,jmlprod)%}
+      {%for i in listOfProduk%}
       <div class="card-produk">
-        <img src="hp.jpg" alt="Avatar" style="width:100%">
+        <img src="{{ i.fotoProduk }}" alt="Avatar" style="width:100%">
         <div class="cardcontentcontainer">
-          <h4><b>Samsung Galaxy A20</b></h4>
-          <p>Baru | Bandung</p>
-          <p>Rp 2.500.000</p>
-          <p>Rp Shopee</p>
+          <h4><b>{{i.namaLengkapProduk}}</b></h4>
+          <p>{% if i.kondisiBarang == 1 %} Baru {% else %} Bekas {% endif %} | {{i.idKota}}</p>
+          <p>{{ "Rp. %.2f"|format(i.hargaAwalProduk)}}</p>
+          <p>{{i.idOnlineMarketplace}}</p>
           <form method="POST" action="#"><button class="button button2">Kunjungi Toko</button></form><br>
           <form method="GET" action="http://localhost:5000/product_detail"><button type="submit" class="button button3">Lihat Detail</button></form><br>
           <!-- <p><a href="{{ url_for('product_detail') }}">Lihat Produk</a></p> -->
