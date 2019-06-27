@@ -1,5 +1,67 @@
 {% extends "layout.html" %}
 
 {% block content %}
-haha
+<div style="padding:16px">
+  <h3>{{produk.namaLengkapProduk}}</h3>
+</div>
+<div class="rowcontainer">
+  <div class="left">
+    <img src="{{produk.fotoProduk}}" alt="Avatar" style="width:100%">
+    <h3>Deskripsi Produk</h3>
+    <p>{{produk.deskripsi}}</p>
+  </div>
+  <div class="right">
+    <table>
+      <tr>
+        <th></th>
+        <th></th>
+      </tr>
+      <tr>
+        <td><h3>Nama Produk</h3></td>
+        <td><p>{{produk.namaLengkapProduk}}</p></td>
+      <tr>
+      <tr>
+        <td><h3>Harga Produk</h3></td>
+        <td><p>Rp. {{produk.hargaAkhirProduk}}</p></td>
+      </tr>
+      <tr>
+        <td><h3>Kondisi Produk</h3></td>
+        <td><p>{% if produk.kondisiBarang == 1 %} Baru {% else %} Bekas {% endif %} </p></td>
+      </tr>
+      <tr>
+        <td><h3>Last Update</h3></td>
+        <td><p>{{produk.updateTerakhir}}</p></td>
+      </tr>
+      <tr>
+        <td><h3>Diskon Produk</h3></td>
+        <td><p>{{produk.diskon}}</p></td>
+      </tr>
+      <tr>
+        <td><h3>Terjual</h3></td>
+        <td><p>Terjual</p></td>
+      </tr>
+      <tr>
+        <td><h3>Rating</h3></td>
+        <td><p>{{produk.ratingProduk}}</p></td>
+      </tr>
+      <tr>
+        <td><h3>Jumlah Rating</h3></td>
+        <td><p>Jumlah Rating</p></td>
+      </tr>
+      <tr>
+        <td><h3>Penjual</h3></td>
+        <td><p>{{produk.namaToko}}</p></td>
+      </tr>
+      <tr>
+        <td><h3>Lokasi Toko</h3></td>
+        <td><p>{{produk.idKota}}</p></td>
+      </tr>
+      <tr>
+        <td><h3>Online Marketplace</h3></td>
+        <td><p>{{produk.idOnlineMarketplace}}</p></td>
+      </tr>
+    </table>
+
+  </div>
+</div>
 {% endblock content %}
