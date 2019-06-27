@@ -7,11 +7,13 @@
   <p>Home > Handphone & Tablet > Handphone </p>
   <h3> {{kataKunci}} (ditemukan {{jmlprod}} item)</h3>
 </div>
-
+{% if listOfProduk == "" %}
+<h3>Produk yang dimaksud tidak ditemukan </h3>
+{% else %}
 <div class="rowcontainer">
   <div class="left">
     <h3>Filter</h3>
-    <form action="#">
+    <form action="http://localhost:5000/search" method="GET">
       <label for="fname">Harga Minimum</label><br>
       <input type="number" name="minprice" placeholder="Minimum"><br>
       <label for="fname">Harga Maksimum</label><br>
@@ -51,8 +53,8 @@
             <th>Harga Tertinggi</th>
           </tr>
           <tr>
-            <td>Rp 2.000.000</td>
-            <td>Rp 2.900.000</td>
+            <td>{{infoHarga.hargaMin}}</td>
+            <td>{{infoHarga.hargaMax}}</td>
           </tr>
           <tr>
             <th>Harga Rata-Rata</th>
@@ -75,10 +77,13 @@
         <div class="cardcontentcontainer">
           <h4><b>{{i.namaLengkapProduk}}</b></h4>
           <p>{% if i.kondisiBarang == 1 %} Baru {% else %} Bekas {% endif %} | {{i.idKota}}</p>
-          <p>{{ "Rp. %.2f"|format(i.hargaAwalProduk)}}</p>
+          <p>{{ "Rp. %.2f"|format(i.hargaAkhirProduk)}}</p>
           <p>{{i.idOnlineMarketplace}}</p>
-          <form method="POST" action="#"><button class="button button2">Kunjungi Toko</button></form><br>
-          <form method="GET" action="http://localhost:5000/product_detail"><button type="submit" class="button button3">Lihat Detail</button></form><br>
+          <form action="{{ i.tautan }}"><button class="button button2">Kunjungi Toko</button></form><br>
+          <form method="POST" action="http://localhost:5000/product_detail">
+            <input type="hidden" name="idProduk" value="{{i.idProduk}}" >
+            <button type="submit" class="button button3">Lihat Detail</button>
+          </form><br>
           <!-- <p><a href="{{ url_for('product_detail') }}">Lihat Produk</a></p> -->
           <label class="limit-checkbox">Bandingkan
             <input type="checkbox">
@@ -91,6 +96,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 <script>
 
   $('input[type=checkbox]').on('change', function (e) {

@@ -1,7 +1,7 @@
 from flask import render_template, url_for, request, session, redirect, jsonify
 from comparison import app
 
-from comparison.models import MainPencarian
+from comparison.models import *
 
 pencarian = MainPencarian()
 
@@ -13,21 +13,26 @@ def index():
 
 @app.route("/search", methods = ['GET','POST'])
 def search():
-    jmlprod = 9
-    if request.method == 'POST':
-        kataKunci = request.form['searchbox']
-        pencarian.kataKunci = kataKunci
-        listOfProduk = pencarian.mencariProdukByKataKunci()
-        jmlprod = len(listOfProduk)
-    return render_template('search.html', jmlprod = jmlprod, kataKunci = kataKunci, listOfProduk = listOfProduk)
-
-@app.route("/cari/<keyword>")
-def cari(keyword):
-        pencarian.kataKunci = keyword
-        listOfProduk = pencarian.mencariProdukByKataKunci()
-        print(listOfProduk[2].namaLengkapProduk)
-        return listOfProduk[2].namaLengkapProduk
-
+        #pencarian = MainPencarian()
+        if request.method == 'POST':
+                pencarian.kataKunci = request.form['searchbox']
+                listOfProduk = pencarian.mencariProdukByKataKunci()
+                jmlprod = len(listOfProduk)
+                infoHarga = InformasiHarga()
+                infoHarga.setInfoHarga(listOfProduk)
+                return render_template('search.html', jmlprod = jmlprod, kataKunci = pencarian.kataKunci, listOfProduk = listOfProduk, infoHarga = infoHarga)
+        if request.method == 'GET':
+                pencarian.hargaMin = 0.0
+                pencarian.hargaMax = 0.0
+                if request.args.get('minprice'):
+                        pencarian.hargaMin = float(request.args.get('minprice'))
+                if request.args.get('maxprice'):
+                        pencarian.hargaMax = float(request.args.get('maxprice'))
+                listOfProduk = pencarian.mencariProdukByKataKunci()
+                jmlprod = len(listOfProduk)
+                infoHarga = InformasiHarga()
+                infoHarga.setInfoHarga(listOfProduk)
+                return render_template('search.html', jmlprod = jmlprod, kataKunci = pencarian.kataKunci, listOfProduk = listOfProduk , infoHarga = infoHarga)
 
 @app.route("/categ")
 def searchCateg():
@@ -43,7 +48,10 @@ def compare():
 @app.route("/product_detail", methods = ['GET','POST'])
 def product_detail():
     if request.method == 'POST':
-        return render_template('product_detail.html')
+            idP = request.form['idProduk']
+            produk = Produk()
+            produk.lihatDetailProduk(idP)
+            return render_template('product_detail.html',produk = produk)
 
 # def detail(id):
 #     return render_template('product-detail.html')
