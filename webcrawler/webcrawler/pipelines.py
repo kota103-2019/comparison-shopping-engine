@@ -34,8 +34,6 @@ class JsonPipeline(object):
 #     def process_item(self, spider):
 
 class MongoDBPipeline(object):
-    
-
     def __init__(self):
         client = pymongo.MongoClient("mongodb://localhost:27017/")
         # client = pymongo.MongoClient('mongodb+srv://KoTA-103:bismillah@cluster0-sr9cz.mongodb.net/test?retryWrites=true&w=majority')

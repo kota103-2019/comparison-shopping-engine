@@ -1,30 +1,39 @@
 # -*- coding: utf-8 -*-
-#[]Location
-#[]Category
+#[v]Location
+#[]Category is Not Dynamic
 import scrapy, datetime
 
 from webcrawler.items import ProductItem
 
 class JdIdSpider(scrapy.Spider):
     name = 'jd.id'
-    allowed_domains = ['www.jd.id']
-    start_urls = [
-        'https://www.jd.id/category/jual-pc-875061492.html'
+
+    def start_requests(self):
+        # client = pymongo.MongoClient("mongodb://localhost:27017/")
+        # db = client["comparison-shopping-engine"]
+        # kota_collection = db["kota"]
+
+        urls = [
+            # "https://www.jd.id/category/jual-pc-875061492.html",
+            # "https://www.jd.id/category/jual-laptop-875061490.html",
+            "https://www.jd.id/category/jual-monitor-875061553.html",
         ]
+
+        for url_item in urls:
+            yield scrapy.Request(url=url_item, callback=self.parse)
+
 
     def parse(self, response):
         products = response.css('div.item div.p-desc')
         #follow each product links
         for product_detail in products:
             product_link = response.urljoin(product_detail.css('a::attr(href)').get())
-            yield scrapy.Request(url=product_link, callback=self.parse, meta={
+            yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
                 'splash':{
                     'args':{
                         'html':1,
                         # 'proxy':'http://10.10.0.6:3128',
                     },
-
-                    'endpoint':'render.html',
                 }
             })
         
@@ -35,6 +44,8 @@ class JdIdSpider(scrapy.Spider):
             yield scrapy.Request(url=next_page, callback=self.parse)
 
     def parse_product(self, response):
+
+
         product_object = ProductItem()
         product_object['online_marketplace'] = self.name
         product_object['time_taken'] = datetime.datetime.now()
@@ -48,7 +59,7 @@ class JdIdSpider(scrapy.Spider):
         else:
             product_object['title'] = response.css("div#summary h1.tit span::text").get()
         #image_url in string format
-        product_object['image_url'] = response.urljoin(response.css("div.big-img-cntnr img::attr(src").get())
+        product_object['image_url'] = response.urljoin(response.css("div.big-img-cntnr img::attr(src)").get())
         
         #get price data in string'123,456,789'
         price = response.css("div.price div.dd span.sale-price::text").get()
@@ -58,6 +69,10 @@ class JdIdSpider(scrapy.Spider):
         #stock data in string format ex.'Stok sedikit'
         product_object['stock'] = response.css('div.dd div#store-prompt::text').get()
         
+        #set original price with the same value as final price
+        product_object['price_original'] = float(price.replace(',',''))
+        #set discount to 0.0
+        product_object['discount'] = float(0)
         #check discount
         is_discount = response.css("div.lastprice div.dd::text").get()
         if(is_discount):
@@ -75,6 +90,8 @@ class JdIdSpider(scrapy.Spider):
             #convert into float format '5.0'
             product_object['discount'] = float(discount)
         
+        #set rating to 0.0
+        product_object['rating'] = float(0)
         #get rating data in string'5.0'
         rating = response.css("div.scores span.number::text").get()
         if rating is not None:
@@ -94,14 +111,17 @@ class JdIdSpider(scrapy.Spider):
             #seller in string format
             product_object['seller'] = response.css('div.seller-name div.title-right h2.name::text').get()
             #seller_url in string format
-            product_object['seller_url'] = response.css(response.css('div.seller-name div.title-right a.clickable::attr(href)').get())
+            product_object['seller_url'] = response.urljoin(response.css('div.seller-name div.title-right a.clickable::attr(href)').get())
             product_object['seller_location'] = "Informasi Lokasi Penjual tidak Ditemukan"
 
         #get seller last activity in string format
         product_object['last_activity'] = "Informasi tidak Ditemukan"
 
         #convert into defined category data from start url     
-        # product_object['category'] = response
+        #'Dsktp' = Desktop
+        #'Lptop' : Laptop
+        #'Mntr' : Monitor
+        product_object['category'] = 'Mntr'
 
         #description in string HTML format
         # product_object['description'] = response

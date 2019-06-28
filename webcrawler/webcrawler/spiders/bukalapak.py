@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # TODO : 
-# []Location
-# []Category
+# [v]Location
+# []Category is Not Dynamic
 # [v]Seller Activity
 import scrapy, datetime, pymongo
 
@@ -17,14 +17,14 @@ class BukalapakSpider(scrapy.Spider):
 
         urls = [
             # "https://www.bukalapak.com/c/komputer/desktop?from=navbar_categories&source=navbar",
-            "https://www.bukalapak.com/c/komputer/laptop?from=navbar_categories&source=navbar",
+            # "https://www.bukalapak.com/c/komputer/laptop?from=navbar_categories&source=navbar",
+            "https://www.bukalapak.com/c/komputer/monitor?from=navbar_categories&source=navbar",
         ]
 
         for url_item in urls:
             yield scrapy.Request(url=url_item, callback=self.parse, meta={
                 "collection" : kota_collection
             })
-
 
     def parse(self, response):
         kota_collection = response.meta["collection"]
@@ -125,8 +125,10 @@ class BukalapakSpider(scrapy.Spider):
 
         #convert into defined category data from start url 
         # product_object['category'] = str(response.css("dd.c-deflist__value.qa-pd-category-value.qa-pd-category::text").get()).replace("\n","")
-        #Dsktp : Desktop
-        product_object['category'] = "Lptop"
+        #'Dsktp' : Desktop
+        #'Lptop' : Laptop
+        #'Mntr' : Monitor
+        product_object['category'] = "Mntr"
         
         #description in string HTML format
         # product_object['description'] = response.css("div.qa-pd-description p").get()
