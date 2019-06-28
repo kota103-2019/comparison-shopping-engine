@@ -21,11 +21,9 @@
       <label for="fname">Lokasi Toko</label><br>
       <input list="daftarlokasi" name="lokasi">
       <datalist id="daftarlokasi">
-        <option value="Bandung">
-        <option value="Jakarta">
-        <option value="Batam">
-        <option value="Solo">
-        <option value="Cimahi">
+        {% for i in listKota %}
+        <option value="{{i.namaKota}}">
+        {% endfor %}
       </datalist>
       <br>
       <label for="fname">Kondisi Produk</label><br>
@@ -35,7 +33,7 @@
       </select>
       <input type="submit" value="Terapkan">
     </form>
-    <form class="" action="#">
+    <form class="" action="http://localhost:5000/search">
       <input type="submit" name="reset" value="Reset">
     </form>
     <form class="" action="http://localhost:5000/compare">
@@ -53,16 +51,16 @@
             <th>Harga Tertinggi</th>
           </tr>
           <tr>
-            <td>{{infoHarga.hargaMin}}</td>
-            <td>{{infoHarga.hargaMax}}</td>
+            <td>Rp. {{"%.2f"|format(infoHarga.hargaMin)}}</td>
+            <td>Rp. {{"%.2f"|format(infoHarga.hargaMax)}}</td>
           </tr>
           <tr>
             <th>Harga Rata-Rata</th>
             <th>Harga Tengah</th>
           </tr>
           <tr>
-            <td>Rp 00000</td>
-            <td>Rp 00000</td>
+            <td>Rp. {{"%.2f"|format(infoHarga.hargaMean)}}</td>
+            <td>Rp. {{"%.2f"|format(infoHarga.hargaMed)}}</td>
           </tr>
         </table>
       </div>

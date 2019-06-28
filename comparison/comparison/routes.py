@@ -32,7 +32,7 @@ def search():
                 jmlprod = len(listOfProduk)
                 infoHarga = InformasiHarga()
                 infoHarga.setInfoHarga(listOfProduk)
-                return render_template('search.html', jmlprod = jmlprod, kataKunci = pencarian.kataKunci, listOfProduk = listOfProduk , infoHarga = infoHarga)
+                return render_template('search.html', jmlprod = jmlprod, listKota =pencarian.listKota , kataKunci = pencarian.kataKunci, listOfProduk = listOfProduk , infoHarga = infoHarga)
 
 @app.route("/categ")
 def searchCateg():

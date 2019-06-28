@@ -2,6 +2,7 @@ from bson.objectid import ObjectId
 import re
 from comparison import app
 from .extensions import mongo
+from statistics import median, mean
 
 class Produk:
     def __init__(self):
@@ -68,16 +69,21 @@ class MainPencarian:
             ptemp.idProduk = ObjectId(i['_id'])
             ptemp.namaLengkapProduk = str(i['title'])
             ptemp.idKategori = str(i['category'])
-            ptemp.idKota = str(i['seller_location'])
+            namaKota = ""
+            for x in self.listKota:
+                if x.idKota == str(i['seller_location']) :
+                    namaKota = x.namaKota
+                    break
+            ptemp.idKota = namaKota
             ptemp.namaToko = str(i['seller'])
             ptemp.fotoProduk = str(i['image_url'])
             ptemp.ratingProduk = i['rating']
             #ptemp.jumlahRating = int(i[''])
+            ptemp.kondisiBarang = int(i['condition'])
             ptemp.hargaAwalProduk = i['price_original']
             ptemp.hargaAkhirProduk = i['price_final']
             ptemp.diskon = float(i['discount'])
             #ptemp.terjual = 0
-            ptemp.kondisiBarang = int(i['condition'])
             ptemp.deskripsi = str(i['description'])
             ptemp.idOnlineMarketplace = str(i['online_marketplace'])
             ptemp.tautan = str(i['url'])
@@ -100,26 +106,12 @@ class InformasiHarga:
         self.hargaMean = 0.0
         self.hargaMed = 0.0
     
-    def cariHargaMin(self, listOfProduk):
-        min = listOfProduk[0].hargaAkhirProduk
-        for i in listOfProduk:
-            if i.hargaAkhirProduk < min:
-                min = i.hargaAkhirProduk
-        return min
-    
-    def cariHargaMax(self, listOfProduk):
-        max = listOfProduk[0].hargaAkhirProduk
-        for i in listOfProduk:
-            if i.hargaAkhirProduk > max:
-                max = i.hargaAkhirProduk
-        return max
-
-    def hitungHargaMean(listOfProduk):
-        return True
-    def hitungHargaMed(listOfProduk):
-        return True
-    
     def setInfoHarga(self, listOfProduk):
-        self.hargaMax = self.cariHargaMax(listOfProduk)
-        self.hargaMin = self.cariHargaMin(listOfProduk)
-#class
+        listHarga = []
+        for i in listOfProduk:
+            listHarga.append(i.hargaAkhirProduk)
+        
+        self.hargaMax = max(listHarga)
+        self.hargaMin = min(listHarga)
+        self.hargaMean = mean(listHarga)
+        self.hargaMed = median(listHarga)
