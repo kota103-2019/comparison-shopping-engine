@@ -26,8 +26,6 @@ class LazadaSpider(scrapy.Spider):
                         'html':1,
                         # 'proxy':'http://10.10.0.6:3128',
                     },
-
-                    'endpoint':'render.html',
                 }
             })
 
@@ -61,6 +59,10 @@ class LazadaSpider(scrapy.Spider):
         #replace with 'Informasi Stok Barang tidak Ditemukan'
         product_object['stock'] = 'Informasi Stok Barang tidak Ditemukan'
         
+        #set original price with the same value as final price
+        product_object['price_original'] = float(price)
+        #set discount to 0.0
+        product_object['discount'] = float(0)
         #check discount
         is_discount = response.css('div.pdp-mod-product-price div.pdp-product-price div.origin-block span.pdp-price::text').get() is not None
         if(is_discount):
@@ -78,6 +80,8 @@ class LazadaSpider(scrapy.Spider):
             #convert into float format '1.0'
             product_object['discount'] = float(discount)
 
+        #set rating to 0.0
+        product_object['rating'] = float(0)
         #get rating data in string '5.0'
         rating = response.css("div.summary span.score-average::text").get()
         if rating is not None:

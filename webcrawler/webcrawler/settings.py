@@ -114,10 +114,3 @@ SPIDER_MIDDLEWARES = {
 }
 
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
-
-#MONGO DB CONFIGURATION
-
-MONGODB_SERVER = 'localhost'
-MONGODB_PORT = 27017
-MONGODB_DATABASE = 'comparison-shopping-engine'
-MONGODB_COLLECTION = 'products'
