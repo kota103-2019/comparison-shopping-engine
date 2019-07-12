@@ -107,11 +107,12 @@ class InformasiHarga:
         self.hargaMed = 0.0
     
     def setInfoHarga(self, listOfProduk):
-        listHarga = []
-        for i in listOfProduk:
-            listHarga.append(i.hargaAkhirProduk)
-        
-        self.hargaMax = max(listHarga)
-        self.hargaMin = min(listHarga)
-        self.hargaMean = mean(listHarga)
-        self.hargaMed = median(listHarga)
+        if len(listOfProduk) > 0 :
+            listHarga = []
+            for i in listOfProduk:
+                listHarga.append(i.hargaAkhirProduk)
+            
+            self.hargaMax = max(listHarga)
+            self.hargaMin = min(listHarga)
+            self.hargaMean = mean(listHarga)
+            self.hargaMed = median(listHarga)
