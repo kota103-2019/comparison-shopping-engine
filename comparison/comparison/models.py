@@ -97,6 +97,15 @@ class MainPencarian:
             return listOfProduk
 
 
+class KataKunci:
+    def __init__(self, katakunci):
+        self.katakunci = katakunci
+
+class OnlineMarketplace:
+    def __init__(self, idOnlineMarketplace, namaMarketplace, alamatWebsite):
+        self.idOnlineMarketplace = idOnlineMarketplace
+        self.namaMarketplace = namaMarketplace
+        self.alamatWebsite = alamatWebsite
 
 class InformasiHarga:
     def __init__(self):
