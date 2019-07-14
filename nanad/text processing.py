@@ -1,4 +1,4 @@
-import nltk
+from nltk
 nltk.download('punkt')
 
 word_input = "OPPO A5s 2GB/32GB-Black (Garansi Resmi)"
