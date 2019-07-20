@@ -8,38 +8,60 @@
 #[]Seller Url
 #[]Seller Last Activity
 
-import scrapy, datetime
+import scrapy, datetime, pymongo
 
 from webcrawler.items import ProductItem
 
 class LazadaSpider(scrapy.Spider):
     name = 'lazada'
-    
     def start_requests(self):
-        urls = [
-            'https://www.lazada.co.id/beli-laptop/?page=1&spm=a2o4j.home.cate_1.2.1dea4ceeVhW9Zw'
-        ]
-        for url_item in urls:
-            yield scrapy.Request(url=url_item, callback=self.parse, meta={
-                'splash':{
-                    'args':{
-                        'html':1,
-                        # 'proxy':'http://10.10.0.6:3128',
-                    },
-                }
-            })
-
+        client = pymongo.MongoClient("mongodb://localhost:27017/")
+        db = client["comparison-shopping-engine"]
+        kategori_collection = db["kategori"]
+    
+        # urls = [
+        #     'https://www.lazada.co.id/beli-laptop/?page=1&spm=a2o4j.home.cate_1.2.1dea4ceeVhW9Zw'
+        # ]
+        # for url_item in urls:
+        #     yield scrapy.Request(url=url_item, callback=self.parse, meta={
+        #         'splash':{
+        #             'args':{
+        #                 'html':1,
+        #                 # 'proxy':'http://10.10.0.6:3128',
+        #             },
+        #         }
+        #     })
+        for kategori in kategori_collection.find():
+            for url_lazada in kategori["lazada"]:
+        #         #print(url_bukalapak)
+                if url_lazada:
+                    yield scrapy.Request(url=url_lazada, callback=self.parse, meta={
+                        'splash':{
+                            'args':{
+                                'html':1,
+                                # 'proxy':'http://10.10.0.6:3128',
+                            },
+                        },
+                        # "collection" : kota_collection,
+                        "idkategori":kategori["idkategori"]
+                    })
+                    
     def parse(self, response):
         products = response.css("div.c2prKC div.c3KeDq div.c16H9d")
+        idkategori = response.meta["idkategori"]
         #follow each product links
         for product_detail in products:
             product_link = response.urljoin(product_detail.css("a::attr(href)").get())
-            yield scrapy.Request(url=product_link, callback=self.parse_product)
+            yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
+                "idkategori" : idkategori
+                } )
         
         # next_page_object = response
 
     def parse_product(self, response):
+        idkategori = response.meta["idkategori"]
         product_object = ProductItem()
+        
         product_object['online_marketplace'] = self.name
         product_object['time_taken'] = datetime.datetime.now()
         product_object['url'] = response.url
@@ -104,7 +126,7 @@ class LazadaSpider(scrapy.Spider):
         # product_object['last_activity'] = 
         
         #convert into defined category data from start url 
-        # product_object['category'] = response
+        product_object['category'] = idkategori
         
         #description in string HTML format
         # product_object['description'] = response
