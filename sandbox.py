@@ -10,6 +10,7 @@ db = client["comparison-shopping-engine"]
 product_collection = db["products"]
 kota_collection = db["kota"]
 index_collection = db["inverted_index"]
+kategori_collection = db["kategori"]
 
 def replace_kota_to_defined_kota():
     for item in product_collection.find():
@@ -89,14 +90,31 @@ def title_indexing():
                 )
             
     
+def print_category():
+    kategori_dictionary = dict()
+    # kategori_dictionary = defaultdict(list)
+    for parent in kategori_collection.find({
+        "parentkategori" : ""
+    }):
+        kategori_dictionary[parent['namakategori']] = list()
+        for child in kategori_collection.find({
+            "parentkategori" : parent['idkategori']
+        }):
+            kategori_dictionary[parent['namakategori']].append(child['namakategori'])
 
+    print(kategori_dictionary)  
+            
 
 if __name__ == '__main__':
 
-    print('hello world')
+    # print('hello world')
     # replace_kota_to_defined_kota()
-    title_indexing()
+    # title_indexing()
     # print(string.punctuation)
+    print_category()
+    
+
+
 
 
 

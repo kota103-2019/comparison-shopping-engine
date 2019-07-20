@@ -10,7 +10,7 @@ class Produk:
         self.namaLengkapProduk = ""
 
     def lihatDetailProduk(self, idProduk):
-        temp = mongo.db.produk.find_one({"_id": ObjectId(idProduk)})
+        temp = mongo.db.products.find_one({"_id": ObjectId(idProduk)})
         if temp is not None:
             self.namaLengkapProduk = str(temp['title'])
             self.idKategori = str(temp['category'])
@@ -18,11 +18,9 @@ class Produk:
             self.namaToko = str(temp['seller'])
             self.fotoProduk = str(temp['image_url'])
             self.ratingProduk = float(temp['rating'])
-            #ptemp.jumlahRating = int(i[''])
             self.hargaAwalProduk = float(temp['price_original'])
             self.hargaAkhirProduk = float(temp['price_final'])
-            self.diskon = float(temp['discount'])
-            #ptemp.terjual = 0
+            self.diskon = str(temp['discount'])
             self.kondisiBarang = int(temp['condition'])
             self.deskripsi = str(temp['description'])
             self.idOnlineMarketplace = str(temp['online_marketplace'])
@@ -34,10 +32,24 @@ class Produk:
 class Kota:
     def __init__(self):
         self.namaKota = ""
+
         
 class Kategori:
     def __init__(self):
-        self.namaKategori = ""
+        self.kategoriDict = dict()
+
+    def getKategori(self):
+        for parent in mongo.db.kategori.find({
+            "parentkategori" : ""
+        }):
+            self.kategoriDict[parent['namakategori']] = list()
+            for child in mongo.db.kategori.find({
+                "parentkategori" : parent['idkategori']
+            }):
+                self.kategoriDict[parent['namakategori']].append(child['namakategori'])
+        
+        return self.kategoriDict
+
 
 class MainPencarian:
     #Initialization
@@ -59,53 +71,36 @@ class MainPencarian:
         key = self.kataKunci        
         reString = ".*%s.*" % key # string untuk menampung query like untuk penggunaan regex
         rgx = re.compile(reString, re.IGNORECASE) # mengcompile regex dengan menginore penggunaan Upper & Lower case
-        filterQuery = {"title": rgx,"rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True } }
+        # filterQuery = {"title": rgx,"rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True } }
+        filterQuery = {"title": rgx}
+
         if self.hargaMin > 0 and self.hargaMax > 0:
             filterQuery = {"title": rgx, "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True }}
-        dataProduk = mongo.db.produk.find(filterQuery)
+        dataProduk = mongo.db.products.find(filterQuery)
         listOfProduk = []
         for i in dataProduk:
             ptemp = Produk()
             ptemp.idProduk = ObjectId(i['_id'])
             ptemp.namaLengkapProduk = str(i['title'])
             ptemp.idKategori = str(i['category'])
-            namaKota = ""
-            for x in self.listKota:
-                if x.idKota == str(i['seller_location']) :
-                    namaKota = x.namaKota
-                    break
-            ptemp.idKota = namaKota
+            ptemp.idKota = i['seller_location']
             ptemp.namaToko = str(i['seller'])
             ptemp.fotoProduk = str(i['image_url'])
             ptemp.ratingProduk = i['rating']
-            #ptemp.jumlahRating = int(i[''])
             ptemp.kondisiBarang = int(i['condition'])
             ptemp.hargaAwalProduk = i['price_original']
             ptemp.hargaAkhirProduk = i['price_final']
-            ptemp.diskon = float(i['discount'])
-            #ptemp.terjual = 0
-            ptemp.deskripsi = str(i['description'])
             ptemp.idOnlineMarketplace = str(i['online_marketplace'])
+            ptemp.diskon = i['discount']
+            ptemp.deskripsi = str(i['description'])
             ptemp.tautan = str(i['url'])
-
             listOfProduk.append(ptemp)
             del ptemp
-        
+
         if len(listOfProduk) < 1 :
             return ""
         else:
             return listOfProduk
-
-
-class KataKunci:
-    def __init__(self, katakunci):
-        self.katakunci = katakunci
-
-class OnlineMarketplace:
-    def __init__(self, idOnlineMarketplace, namaMarketplace, alamatWebsite):
-        self.idOnlineMarketplace = idOnlineMarketplace
-        self.namaMarketplace = namaMarketplace
-        self.alamatWebsite = alamatWebsite
 
 class InformasiHarga:
     def __init__(self):
@@ -116,11 +111,13 @@ class InformasiHarga:
         self.hargaMed = 0.0
     
     def setInfoHarga(self, listOfProduk):
-        listHarga = []
-        for i in listOfProduk:
-            listHarga.append(i.hargaAkhirProduk)
+        if(len(listOfProduk)>0):
+            listHarga = []
         
-        self.hargaMax = max(listHarga)
-        self.hargaMin = min(listHarga)
-        self.hargaMean = mean(listHarga)
-        self.hargaMed = median(listHarga)
+            for i in listOfProduk:
+                listHarga.append(i.hargaAkhirProduk)
+        
+            self.hargaMax = max(listHarga)
+            self.hargaMin = min(listHarga)
+            self.hargaMean = mean(listHarga)
+            self.hargaMed = median(listHarga)

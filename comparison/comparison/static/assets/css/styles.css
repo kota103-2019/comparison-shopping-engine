@@ -1,0 +1,61 @@
+#search-button {
+  border-radius:0px 10px 10px 0px;
+  border-color:#FFF8B6;
+  background-color:#FFF8B6;
+}
+
+#search-button:hover {
+  background-color:#FFF8B6;
+  border-color:#FFF8B6;
+}
+
+.breadcrumb-item {
+  vertical-align:middle;
+  text-align:center;
+}
+
+.breadcrumb {
+  border-radius:0px;
+  z-index: 2;
+  position: fixed
+}
+
+.sidebar {
+  border-radius:10px;
+  box-shadow:5px 5px 10px -10px rgba(0,0,0,0.2);
+}
+
+.price-information {
+  border-radius:10px;
+  box-shadow:5px 5px 10px -10px rgba(0,0,0,0.2);
+}
+
+.seller-information {
+  border-radius:10px;
+  box-shadow:5px 5px 10px -10px rgba(0,0,0,0.2);
+}
+
+.search-field {
+  background:white;
+  border:none;
+  border-radius:10px 0 0 10px;
+}
+
+.product-list {
+  border-radius:10px;
+  box-shadow:5px 5px 10px -10px rgba(0,0,0,0.2);
+}
+
+.sidebar-content.sidebar {
+  position:fixed;
+}
+
+.result-head {
+  box-shadow:5px 5px 10px -10px rgba(0,0,0,0.2);
+  z-index: 2;
+  position: fixed;
+}
+
+.price-original {
+  text-decoration:line-through;
+}
