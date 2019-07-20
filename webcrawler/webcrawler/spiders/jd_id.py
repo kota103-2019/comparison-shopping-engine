@@ -32,7 +32,7 @@ class JdIdSpider(scrapy.Spider):
                 'splash':{
                     'args':{
                         'html':1,
-                        # 'proxy':'http://10.10.0.6:3128',
+                        'proxy':'http://10.10.0.6:3128',
                     },
                 }
             })

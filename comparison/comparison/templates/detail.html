@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<ol class="breadcrumb fixed-top" style="background-color:#f6e069;height:36px;padding:5px 16px;margin-top:56px;width:100%;margin-bottom:0;">
+    <li class="breadcrumb-item"><a><span>Home</span></a></li>
+    <li class="breadcrumb-item"><a><span>Library</span></a></li>
+    <li class="breadcrumb-item"><a><span>Data</span></a></li>
+</ol>
+<div class="result-head fixed-top" style="height:35px;background-color:#ffffff;width:100%;margin-top:92px;">
+    <p class="text-left" style="height:inherit;padding:5px;padding-left:100px;">"{{produk.namaLengkapProduk}}"</p>
+</div>
+<div class="container" style="margin:0px auto;padding:0;margin-top:128px;">
+    <div class="row">
+        <div class="col-xl-3" style="background-color:rgba(255,255,255,0);padding:0px;margin:0px;max-height:none;">
+            <div class="sidebar-content sidebar" style="background-color:rgb(255,255,255);padding:0;margin:10px;max-height:none;height:250px;">
+                <img style="height:189px;width:270px;margin:10;" src="{{produk.fotoProduk}}">
+            </div>
+        </div>
+        <div class="col" style="z-index:-5">
+            <div class="row">
+                <div class="col" style="background-color:rgba(255,255,255,0);padding:0px;margin:0px;">
+                    <div class="price-information" style="background-color:#ffffff;margin:10px;padding:30px;height:275px;">
+                        <h2 style="font-size:24px;">{{produk.namaLengkapProduk}}<br></h2>
+                        <hr>
+                        <div class="rating" style="margin:5px 0px;">
+                            <p class="d-inline" style="margin:0px;margin-bottom:0px;margin-right:10px;">{{produk.ratingProduk}}/5.0</p>
+                            <div class="d-inline-block star-placeholder">
+                                {% for i in range(produk.ratingProduk|int) %}
+                                    <i class="fa fa-star" style="color:rgb(251,255,52);margin:0px;"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if produk.diskon != '0.0' %}
+                            <div class="discount" style="margin:5px 0px;">
+                                <span class="badge badge-pill badge-danger d-inline">{{produk.diskon}} OFF</span>
+                                <p class="d-inline price-original" style="margin-bottom:0px;margin-left:10px;font-size:16px;color:rgb(186,186,186);">{{"Rp {:,.2f}".format(produk.hargaAwalProduk)}}</p>
+                            </div>
+                        {% endif %}
+                        <p class="price-final" style="font-size:30px;margin:5px 0px;">{{"Rp {:,.2f}".format(produk.hargaAkhirProduk)}}<br></p>
+                        <p class="stock" style="margin:0px;margin-bottom:0px;">Stok : 12</p>
+                    </div>
+                </div>
+                <div class="col-xl-3" style="padding:0px;">
+                    <div class="seller-information" style="background-color:#ffffff;margin:10px;padding:30px;height:275px;">
+                        <h2 style="font-size:24px;">{{produk.namaToko}}<br></h2>
+                        <p>{{produk.idKota}}</p>
+                        <div class="last-update">
+                            <p style="color:rgb(204,204,204);margin-bottom:0px;font-size:16px;">Pembaruan Terakhir</p>
+                            <p>{{produk.updateTerakhir}}<br></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="background-color:rgba(255,255,255,0);padding:0px;margin:0px;">
+                    <div class="product-list" style="margin:10px;padding:30px;background-color:#ffffff;max-width:inherit;">
+                        <h2 style="font-size:24px;">Deskripsi</h2>
+                        <p>{{produk.deskripsi}}<br></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

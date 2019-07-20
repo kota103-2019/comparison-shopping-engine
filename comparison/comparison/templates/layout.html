@@ -1,86 +1,55 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='style.css') }}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <title>Comparison Shopping Web</title>
-    </head>
-    <body>
-      <div class="navbar">
-        <a href="http://localhost:5000/">Home</a>
-        <!-- <a href="#news">Hot</a> -->
-        <div class="dropdown">
-          <button class="dropbtn">Kategori
-            <i class="fa fa-caret-down"></i>
-          </button>
-          <div class="dropdown-content">
-            <!-- <div class="header">
-              <h2>Mega Menu</h2>
-            </div> -->
-            <div class="row">
-              <div class="column">
-                <h3>Handphone&Tablet</h3>
-                <a href="#">Handphone</a>
-                <a href="#">Tablet</a>
-                <a href="#">Sparepart&Tool</a>
-                <a href="#">Device Lain</a>
-                <a href="#">Lainnya</a>
-              </div>
-              <div class="column">
-                <h3>Komputer</h3>
-                <a href="#">Hardware</a>
-                <a href="#">Komponen</a>
-                <a href="#">Aksesoris</a>
-                <a href="#">Jaringan</a>
-                <a href="#">Storage</a>
-              </div>
-              <div class="column">
-                <h3>Elektronik</h3>
-                <a href="#">Kamera&Camcorder</a>
-                <a href="#">Televisi</a>
-                <a href="#">Audio</a>
-                <a href="#">Media Player</a>
-                <a href="#">Alat Pendingin</a>
-                <a href="#">Lainnya</a>
-              </div>
-              <div class="column">
-                <h3>Industrial</h3>
-                <a href="#">Mesin</a>
-                <a href="#">Safety</a>
-              </div>
-            </div>
-          <div class="row">
-            <div class="column">
-              <h3>Olahraga</h3>
-              <a href="#">Alat Olahraga</a>
-            </div>
-            <div class="column">
-              <h3>Rumah Tangga</h3>
-              <a href="#">Furniture</a>
-              <a href="#">Tempat Penyimpanan</a>
-              <a href="#">Alat Rumah Tangga</a>
-            </div>
-            <div class="column">
-              <h3>Perlengkapan Kantor</h3>
-              <a href="#">Alat Tulis Kantor</a>
-              <a href="#">Alat Kantor</a>
-            </div>
-            <div class="column">
-              <h3></h3>
-              <a href="#"></a>
-              <a href="#"></a>
-            </div>
-          </div>
-          </div>
-        </div>
-        <form action="http://localhost:5000/search" method="POST">
-          <input type="text" placeholder="Masukkan kata KataKunci" name="searchbox" class="form-control">
-        </form>
-      </div>
-        <!-- <div class="container"> -->
-        {% block content %} {% endblock %}
 
-        <!-- </div> -->
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison Shopping Web</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename ='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename ='assets/fonts/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/styles.css') }}">
+
+</head>
+
+<body style="background-color:#faf9f9;">
+    <nav class="navbar navbar-light navbar-expand fixed-top" id="my-navbar" style="background-color:#ffee54;width:100%;margin-top:0;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" style="margin:0px 0px;width:10%;padding:5px 0px;margin-left:50px;">CSW</a>
+                <button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1">
+                    <span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span>
+                </button>
+            <div class="collapse navbar-collapse" id="navcol-1" style="width:50%;">
+                <ul class="nav navbar-nav" style="width:10%;padding:0;">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#" style="margin:0px 0px;">kategori</a>
+                        <div class="dropdown-menu" role="menu" style="max-height: 500px; overflow: scroll;">
+                            <!-- <a class="dropdown-item" role="presentation" href="#">First Item</a> -->
+                            {% for key, value in kategori_list.items() %}
+                                <a class="dropdown-item" role="presentation" href="#"><b>{{ key }}</b></a>
+                                {% for child_kategori_item in value %}
+                                <a class="dropdown-item" role="presentation" href="#">{{ child_kategori_item }}</a>                        
+                                {% endfor %}
+                            {% endfor %}
+                            
+                        </div>
+                    </li>
+                </ul>
+                <form action="/search" method="GET" class="form-inline" style="padding:0px;margin:0px 0px;width:40%;">
+                    <div class="form-group" style="width:90%;">
+                        <input class="form-control search-field" type="search" name="query" style="height:38px;width:100%;"></div>
+                        <button class="btn btn-primary" type="submit" id="search-button" style="width:10%;">
+                            <i class="fa fa-search" style="color:#494949;"></i>
+                        </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename ='assets/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename ='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+</body>
+
 </html>
