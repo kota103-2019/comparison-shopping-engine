@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 #[]Location
-#[]Category
 #[]Seller Information
 #   has separate scraper
 #[]Seller Name
@@ -18,45 +17,54 @@ class LazadaSpider(scrapy.Spider):
         client = pymongo.MongoClient("mongodb://localhost:27017/")
         db = client["comparison-shopping-engine"]
         kategori_collection = db["kategori"]
-    
-        # urls = [
-        #     'https://www.lazada.co.id/beli-laptop/?page=1&spm=a2o4j.home.cate_1.2.1dea4ceeVhW9Zw'
-        # ]
-        # for url_item in urls:
-        #     yield scrapy.Request(url=url_item, callback=self.parse, meta={
-        #         'splash':{
-        #             'args':{
-        #                 'html':1,
-        #                 # 'proxy':'http://10.10.0.6:3128',
-        #             },
-        #         }
-        #     })
+
         for kategori in kategori_collection.find():
             for url_lazada in kategori["lazada"]:
-        #         #print(url_bukalapak)
                 if url_lazada:
+                    print(url_lazada+" awal")
+                    #pageNum = 1
+                    #end = False
+                    #while not end :
+                    #    print("masuk while")
+                     #   url = url_lazada +"?page="+str(pageNum)
+                        #if scrapy.Request(url=url_lazada,callback=self.parse_page):
+                        #    print(url+"masuk if")
                     yield scrapy.Request(url=url_lazada, callback=self.parse, meta={
                         'splash':{
                             'args':{
                                 'html':1,
+                                'wait':1,
                                 # 'proxy':'http://10.10.0.6:3128',
                             },
                         },
-                        # "collection" : kota_collection,
-                        "idkategori":kategori["idkategori"]
+                        #"collection" : kota_collection,
+                        "idkategori":kategori["idkategori"],
+                        #"pageNum":pageNum
                     })
+                        #     pageNum +=1
+                        # else:
+                        #     end = True
+                        #     break
                     
     def parse(self, response):
-        products = response.css("div.c2prKC div.c3KeDq div.c16H9d")
+        products = response.css("div.c1_t2i div.c2prKC div.c3KeDq div.c16H9d")
         idkategori = response.meta["idkategori"]
-        #follow each product links
+        
         for product_detail in products:
             product_link = response.urljoin(product_detail.css("a::attr(href)").get())
             yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
+                'splash':{
+                    'args':{
+                        'html':1,
+                        'wait':1,
+                        # 'proxy':'http://10.10.0.6:3128',
+                    },
+                },
                 "idkategori" : idkategori
                 } )
         
-        # next_page_object = response
+        
+        
 
     def parse_product(self, response):
         idkategori = response.meta["idkategori"]
@@ -120,6 +128,8 @@ class LazadaSpider(scrapy.Spider):
         
         #get seller location data in string format
         #convert into defined location data from location data in marketplace
+        #seller = response.css('div.seller-link a::attr(href)')
+        product_object['seller'] = response.css('div.seller-name__wrapper div.seller-name__detail a::text')
         # product_object['seller_location'] = response
 
         #get seller last activity in string format
@@ -129,6 +139,14 @@ class LazadaSpider(scrapy.Spider):
         product_object['category'] = idkategori
         
         #description in string HTML format
-        # product_object['description'] = response
+        product_object['description'] = response.css('div.html-content')
         
         yield product_object
+
+    def parse_page(self,response):
+        if response.css("div.c1_t2i div.c2prKC div.c3KeDq div.c16H9d").get() is not None :
+            print("parse page")
+            print(response.css("div.c1_t2i div.c2prKC div.c3KeDq div.c16H9d"))
+            return True
+        else:
+            return False

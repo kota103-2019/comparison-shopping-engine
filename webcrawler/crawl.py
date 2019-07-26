@@ -26,10 +26,10 @@ def title_indexing():
         title = str(item['title'])
         # title = 'Jual Nokia N50 - Nokia Jadul 256MB 1GB'
         title_lowered = title.lower()
-        title_lowered = title_lowered.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+        title_lowered = title_lowered.translate(str.maketrans('','','''!"#$%&'()*+-/:;<=>?@[\]^_`{|}~'''))
         #title_tokenized = nltk.word_tokenize(title_lowered)
         title_tokenized = str(title_lowered).split()
-        title_tokenized = filterStopword(title_tokenized,stopword)
+        #title_tokenized = filterStopword(title_tokenized,stopword)
         # print(title_tokenized)
         
         # data = defaultdict(list)
@@ -80,11 +80,12 @@ def title_indexing():
 def prosesCrawl():
     process = CrawlerProcess(get_project_settings())
     #process.crawl(BukalapakSpider)
-    process.crawl(TokopediaSpider)
+    #process.crawl(TokopediaSpider)
+    process.crawl(LazadaSpider)
     #process.crawl(JdIdSpider)
     process.start()
     print("\n\nPembuatan Index Product kembali")
     colProducts.reindex()
     print("\n\nPembuatan Inverted Index")
-    colInvIndx.drop()
-    title_indexing()
+    #colInvIndx.drop()
+    #title_indexing()

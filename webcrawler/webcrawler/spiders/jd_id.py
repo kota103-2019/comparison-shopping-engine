@@ -13,13 +13,18 @@ class JdIdSpider(scrapy.Spider):
         db = client["comparison-shopping-engine"]
         kategori_collection = db["kategori"]
         # kota_collection = db["kota"]
-        urls = [
-            "https://www.jd.id/category/jual-monitor-875061553.html",
-        ]
+        # urls = [
+        #     "https://www.jd.id/category/jual-monitor-875061553.html",
+        # ]
         for kategori in kategori_collection.find():
             for url_item in kategori["jdId"]:
                 if url_item :
-                    yield scrapy.Request(url=url_item, callback=self.parse,meta={"kategori":kategori["idkategori"]})
+                    #print("KATEGORI ID"+ kategori["idkategori"])
+                    idkat = kategori["idkategori"]
+                    yield scrapy.Request(url=url_item, callback=self.parse, meta={
+                        "kategori" : kategori["idkategori"]
+                    })
+                    # yield scrapy.Request(url=url_item, callback=self.parse, meta={"kategori":kategori["idkategori"]})
         # for kategori in kategori_collection.find():
         #     for url_jdId in kategori["jdId"]:
         #         #print(url_bukalapak)
@@ -29,9 +34,10 @@ class JdIdSpider(scrapy.Spider):
 
     def parse(self, response):
         products = response.css('div.item div.p-desc')
-        #print(response.meta["idkategori"])
-        idkat = ""
-        idkat=response.meta["kategori"]
+        #print(response.meta["kategori"])
+        # idkat = ""
+        idkat = response.meta["kategori"]
+        #print(idkat)
         #follow each product links
         for product_detail in products:
             product_link = response.urljoin(product_detail.css('a::attr(href)').get())
@@ -49,7 +55,9 @@ class JdIdSpider(scrapy.Spider):
         next_page_object = response.urljoin(response.css('div.pagination a.p-next::attr(href)').get())
         if(next_page_object is not None):
             next_page = str(next_page_object)
-            yield scrapy.Request(url=next_page, callback=self.parse)
+            yield scrapy.Request(url=next_page, callback=self.parse, meta={
+                        "kategori" : response.meta["kategori"]
+                    })
 
     def parse_product(self, response):
         idkategori = response.meta["idkategori"]

@@ -1,4 +1,4 @@
-import pymongo, re, nltk, string, time
+import pymongo, re, nltk, string, time, itertools
 from bson.objectid import ObjectId
 
 try:
@@ -52,9 +52,26 @@ def phrase_query(key_tokenized,listDocId):
         for i in range(len(temp)):
             for ind in range(len(temp[i])):
                 temp[i][ind] -= i
-        if set(temp[0]).intersection(*temp) :
-            result.append(doc_id)
-            #print("frase sesuai dengan title")
+        skr = 0
+
+        #while i < len(temp)-1:
+        for i in range(len(temp) - 1):
+            for j in range(len(temp[i])):
+                #print("tempi "+str(temp[i]))
+                #print(i)
+                for k in range(len(temp[i+1])):
+                    if temp[i][j] == temp[i+1][k]:
+                        #print(temp[i][j]+" "+temp[i+1][j])
+                        skr+=1
+            #i+=1
+        rslt = skor()
+        rslt.doc_id = doc_id
+        rslt.skor = skr
+        result.append(rslt)
+        # if set(temp[0]).intersection(*temp) :
+        #     result.append(doc_id)
+        #     print("frase sesuai dengan title")
+        
     return result
 
 print("Pencarian Test\n")
@@ -89,13 +106,13 @@ if len(key_tokenized) > 1:
     for i in phrase_query(key_tokenized,intersectList): # query untuk mengambil doc_id yang memuat 1 frase lengkap berurutan
    
         for j in listSkor:
-            #print(j.doc_id)
-            #print(i)
-            if j.doc_id == i:
+            # print(j.doc_id)
+            # print(i.doc_id)
+            if j.doc_id == i.doc_id:
                 # print("skor sebelum :"+str(j.nilaiSkor))
-                j.nilaiSkor += 1 # untuk setiap doc_id yang memuat frase lengkap tambahkan skor 1
-                print("tambahan skor untuk :"+str(i))
-                print("tambah skor menjadi :"+str(j.nilaiSkor))
+                j.nilaiSkor += i.skor # untuk setiap doc_id yang memuat frase lengkap tambahkan skor 1
+                # print("tambahan skor untuk :"+str(i.doc_id))
+                # print("tambah skor menjadi :"+str(j.nilaiSkor))
                 break
 #sort skor berdasarkan nilaiSkor secara descending, untuk keperluan ranking
 listSkor.sort(key=lambda x: x.nilaiSkor, reverse = True) 
