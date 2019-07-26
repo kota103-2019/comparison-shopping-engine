@@ -21,13 +21,14 @@
             <div class="collapse navbar-collapse" id="navcol-1" style="width:50%;">
                 <ul class="nav navbar-nav" style="width:10%;padding:0;">
                     <li class="dropdown">
-                        <a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#" style="margin:0px 0px;">kategori</a>
-                        <div class="dropdown-menu" role="menu" style="max-height: 500px; overflow: scroll;">
+                        <!-- <a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#" style="margin:0px 0px;">kategori</a> -->
+                        <button class="btn btn-outline-warning btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="color:#494949; border: none;">kategori</button>
+                        <div class="dropdown-menu" role="menu" style="max-height: 500px; overflow-y: scroll; overflow-x: hidden;">
                             <!-- <a class="dropdown-item" role="presentation" href="#">First Item</a> -->
-                            {% for key, value in kategori_list.items() %}
-                                <a class="dropdown-item" role="presentation" href="#"><b>{{ key }}</b></a>
-                                {% for child_kategori_item in value %}
-                                <a class="dropdown-item" role="presentation" href="#">{{ child_kategori_item }}</a>                        
+                            {% for item in kategori_list %}
+                                <a class="dropdown-item" role="presentation" href="/category/{{ item['id'] }}?parent=true"><b>{{ item['kategori'] }}</b></a>
+                                {% for child_kategori_item in item['child'] %}
+                                <a class="dropdown-item" role="presentation" href="/category/{{ child_kategori_item['id']}}" style="padding-left: 20px">{{ child_kategori_item['kategori'] }}</a>                        
                                 {% endfor %}
                             {% endfor %}
                             
@@ -36,7 +37,8 @@
                 </ul>
                 <form action="/search" method="GET" class="form-inline" style="padding:0px;margin:0px 0px;width:40%;">
                     <div class="form-group" style="width:90%;">
-                        <input class="form-control search-field" type="search" name="query" style="height:38px;width:100%;"></div>
+                        <input class="form-control search-field" type="search" name="query" style="height:38px;width:100%; " 
+                            value="{% if not byKategori %}{{kataKunci}}{% endif %}" placeholder="Masukkan kata kunci"></div>
                         <button class="btn btn-primary" type="submit" id="search-button" style="width:10%;">
                             <i class="fa fa-search" style="color:#494949;"></i>
                         </button>

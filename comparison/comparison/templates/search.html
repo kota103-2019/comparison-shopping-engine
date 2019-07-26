@@ -4,8 +4,12 @@
 
 <ol class="breadcrumb fixed-top" style="background-color:#f6e069;height:36px;padding:5px 16px;margin-top:56px;width:100%;margin-bottom:0;">
     <li class="breadcrumb-item"><a><span>Home</span></a></li>
-    <li class="breadcrumb-item"><a><span>Library</span></a></li>
-    <li class="breadcrumb-item"><a><span>Data</span></a></li>
+    {% if byKategori %}
+    <li class="breadcrumb-item"><a><span>Kategori</span></a></li>
+    {% else %}
+    <li class="breadcrumb-item"><a><span>Keyword</span></a></li>
+    <li class="breadcrumb-item"><a><span>"{{kataKunci}}"</span></a></li>
+    {% endif %}
 </ol>
 <div class="result-head fixed-top" style="height:35px;background-color:#ffffff;width:100%;margin-top:92px;">
     <p class="text-left" style="height:inherit;padding:5px;padding-left:100px;">"{{kataKunci}}" ditemukan ({{jmlprod}} item)</p>
@@ -29,7 +33,6 @@
                             {% for kota in listKota %}
                                 <option value="{{kota.namaKota}}">{{kota.namaKota}}</option>
                             {% endfor %}
-                            
                         </select>
                     </div>
                     <hr>
@@ -65,36 +68,49 @@
             <div class="row">
                 <div class="col" style="background-color:rgba(255,255,255,0);padding:0px;margin:0px;">
                     <div class="product-list" style="margin:10px;padding:30px;background-color:#ffffff;max-width:inherit;">
-                        <div style="margin:0px;padding:10px 10px;">
-                            {% for i in listOfProduk %}
-                                <div class="card d-inline-flex" style="margin:10px 5px;max-width:15rem;"><img class="card-img-top w-100 d-block">
-                                    <img class="card-img-top w-100 d-block flex-wrap" src="{{ i.fotoProduk }}" alt="Avatar">
-                                    
-                                    <div class="card-body">
-                                        <h4 class="card-title" style="font-size: 18px">{{ i.namaLengkapProduk[0:30] }} . . .</h4>
-                                        <h6 class="text-muted card-subtitle mb-2">{{ i.idKota }}</h6>
-                                        <p class="card-text">{{ "Rp {:,.2f}".format(i.hargaAkhirProduk)}}</p>
-                                        <button class="btn btn-primary" type="button">Button</button>
-                                    </div>
-                                </div> 
-                            {% endfor %}  
-                        </div>
-                        {# 
-                            <div class="col-xl-4 d-inline-flex" style="margin-bottom:10px;">
-                                <div class="card">
-                                    
-                                    <div class="card-body">
-                                        
-                                        <h4 class="card-title" style="font-size:18px;">{{i.namaLengkapProduk[0:25]}} . . .</h4>
-                                        <p class="card-text">{% if i.kondisiBarang == 1 %} Baru {% else %} Bekas {% endif %}</p>
-                                        <p class="card-text">{{i.idKota}}</p>
-                                        <p class="card-text">{{ "Rp {:,.2f}".format(i.hargaAkhirProduk)}}</p>
-                                        <p class="card-text">{{i.idOnlineMarketplace}}</p>
-                                        <button class="btn btn-primary" type="button">Button</button>
-                                    </div>
+                        <form action="/compare"method='POST'>
+                        <div style="padding:10px;">
+                            <button class="btn btn-primary" type="submit">Bandingkan</button>
+                            <div class="dropdown float-right">
+                                <button class="btn btn-outline-primary btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Dropdown </button>
+                                <div class="dropdown-menu" role="menu">
+                                    <a class="dropdown-item" role="presentation" href="#">First Item</a>
+                                    <a class="dropdown-item" role="presentation" href="#">Second Item</a>
+                                    <a class="dropdown-item" role="presentation" href="#">Third Item</a>
                                 </div>
                             </div>
-                        #}    
+                        </div>
+                        <div style="margin:0px;padding:10px 10px;">
+                            {% for i in listOfProduk %}
+                                <div class="card d-inline-flex" style="margin:10px 5px;width:225px;height:500;">
+                                    <img class="card-img-top w-100 d-block flex-wrap" src="{{ i.fotoProduk }}" alt="Avatar" style="height: 150px; width: 100px;">
+                                    
+                                    <div class="card-body">
+                                        <h4 class="card-title" style="font-size: 18px">{{ i.namaLengkapProduk[0:28] }}. . .</h4>
+                                        <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">{{ i.idKota }}</h6>
+                                        <p class="card-text">{{ "Rp {:,.2f}".format(i.hargaAkhirProduk)}}</p>
+                                        
+                                        <a class="card-link" href="/product?id={{i.idProduk}}">Lihat Detail</a>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="formCheck-1" name="checkproduct" value="{{i.idProduk}}">
+                                            <label class="form-check-label" for="formCheck-1">Bandingkan</label>
+                                        </div>
+                                    </div>
+                                </div> 
+                            {% endfor %}
+                        </div>
+                        </form>
+                        <nav class="float-right">
+                            <ul class="pagination">
+                                <li class="page-item"><a class="page-link" aria-label="Previous" href="{{current_path}}&page={{page|int -1}}"><span aria-hidden="true">«</span></a></li>
+                                <!-- <li class="page-item"><a class="page-link">1</a></li>
+                                <li class="page-item"><a class="page-link">2</a></li>
+                                <li class="page-item"><a class="page-link">3</a></li>
+                                <li class="page-item"><a class="page-link">4</a></li>
+                                <li class="page-item"><a class="page-link">5</a></li> -->
+                                <li class="page-item"><a class="page-link" aria-label="Next" href="{{current_path}}&page={{page|int +1}}"><span aria-hidden="true">»</span></a></li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

@@ -31,11 +31,11 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        {% if produk.diskon != '0.0' %}
-                            <div class="discount" style="margin:5px 0px;">
-                                <span class="badge badge-pill badge-danger d-inline">{{produk.diskon}} OFF</span>
-                                <p class="d-inline price-original" style="margin-bottom:0px;margin-left:10px;font-size:16px;color:rgb(186,186,186);">{{"Rp {:,.2f}".format(produk.hargaAwalProduk)}}</p>
-                            </div>
+                        {% if produk.diskon|string != "0" or produk.diskon|string != "0.0" %}
+                        <div class="discount" style="margin:5px 0px;">
+                            <span class="badge badge-pill badge-danger d-inline">{{produk.diskon}} OFF</span>
+                            <p class="d-inline price-original" style="margin-bottom:0px;margin-left:10px;font-size:16px;color:rgb(186,186,186);">{{"Rp {:,.2f}".format(produk.hargaAwalProduk)}}</p>
+                        </div>
                         {% endif %}
                         <p class="price-final" style="font-size:30px;margin:5px 0px;">{{"Rp {:,.2f}".format(produk.hargaAkhirProduk)}}<br></p>
                         <p class="stock" style="margin:0px;margin-bottom:0px;">Stok : 12</p>
@@ -47,7 +47,7 @@
                         <p>{{produk.idKota}}</p>
                         <div class="last-update">
                             <p style="color:rgb(204,204,204);margin-bottom:0px;font-size:16px;">Pembaruan Terakhir</p>
-                            <p>{{produk.updateTerakhir}}<br></p>
+                            <p>{{produk.updateTerakhir.strftime('%Y-%m-%d')}}<br></p>
                         </div>
                     </div>
                 </div>

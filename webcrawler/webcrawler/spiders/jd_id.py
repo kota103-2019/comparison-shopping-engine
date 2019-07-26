@@ -20,28 +20,32 @@ class JdIdSpider(scrapy.Spider):
         ]
 
         for url_item in urls:
-            yield scrapy.Request(url=url_item, callback=self.parse)
+            yield scrapy.Request(url=url_item, callback=self.parse, meta={
+                "test" : "test123"
+            })
 
 
     def parse(self, response):
-        products = response.css('div.item div.p-desc')
-        #follow each product links
-        for product_detail in products:
-            product_link = response.urljoin(product_detail.css('a::attr(href)').get())
-            yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
-                'splash':{
-                    'args':{
-                        'html':1,
-                        'proxy':'http://10.10.0.6:3128',
-                    },
-                }
-            })
+        data = response.meta["test"]
+        print(data)
+        # products = response.css('div.item div.p-desc')
+        # #follow each product links
+        # for product_detail in products:
+        #     product_link = response.urljoin(product_detail.css('a::attr(href)').get())
+        #     yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
+        #         'splash':{
+        #             'args':{
+        #                 'html':1,
+        #                 'proxy':'http://10.10.0.6:3128',
+        #             },
+        #         }
+        #     })
         
-        #go to the next page
-        next_page_object = response.urljoin(response.css('div.pagination a.p-next::attr(href)').get())
-        if(next_page_object is not None):
-            next_page = str(next_page_object)
-            yield scrapy.Request(url=next_page, callback=self.parse)
+        # #go to the next page
+        # next_page_object = response.urljoin(response.css('div.pagination a.p-next::attr(href)').get())
+        # if(next_page_object is not None):
+        #     next_page = str(next_page_object)
+        #     yield scrapy.Request(url=next_page, callback=self.parse)
 
     def parse_product(self, response):
 

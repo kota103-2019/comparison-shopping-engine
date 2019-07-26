@@ -78,7 +78,7 @@
           <p>{{ "Rp. %.2f"|format(i.hargaAkhirProduk)}}</p>
           <p>{{i.idOnlineMarketplace}}</p>
           <form action="{{ i.tautan }}"><button class="button button2">Kunjungi Toko</button></form><br>
-          <form method="POST" action="http://localhost:5000/product_detail">
+          <form method="POST" action="/product">
             <input type="hidden" name="idProduk" value="{{i.idProduk}}" >
             <button type="submit" class="button button3">Lihat Detail</button>
           </form><br>
