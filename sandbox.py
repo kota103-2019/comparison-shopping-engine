@@ -1,6 +1,7 @@
 import pymongo, re, nltk, string, json
 from collections import defaultdict
-
+from tqdm import tqdm
+import time
 # default punctuation !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
 
 # nltk.download('punkt')
@@ -9,7 +10,7 @@ client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["comparison-shopping-engine"]
 product_collection = db["products"]
 kota_collection = db["kota"]
-index_collection = db["inverted_index"]
+index_collection = db["inverted_index_2"]
 kategori_collection = db["kategori"]
 
 def replace_kota_to_defined_kota():
@@ -32,7 +33,9 @@ def replace_kota_to_defined_kota():
         print("{} : {}".format(idkota, location))
 
 def title_indexing():
-    for item in product_collection.find({}):
+    products = product_collection.find({})
+    for item in tqdm(products, total=products.count()) :
+        # time.sleep(0.25)
         # print(item['title'])
 
         # kalimat.translate(str.maketrans('','',string.punctuation))
@@ -91,18 +94,23 @@ def title_indexing():
             
     
 def print_category():
-    kategori_dictionary = dict()
+    kategori_list = list()
     # kategori_dictionary = defaultdict(list)
     for parent in kategori_collection.find({
         "parentkategori" : ""
     }):
-        kategori_dictionary[parent['namakategori']] = list()
+        appender_dictionary = dict()
+        appender_dictionary[parent['idkategori']] = parent['namakategori']
+        appender_dictionary['child'] = list()
         for child in kategori_collection.find({
             "parentkategori" : parent['idkategori']
         }):
-            kategori_dictionary[parent['namakategori']].append(child['namakategori'])
-
-    print(kategori_dictionary)  
+            child_appender_dictionary = dict()
+            child_appender_dictionary[child['idkategori']] = child['namakategori']
+            appender_dictionary['child'].append(child_appender_dictionary)
+        kategori_list.append(appender_dictionary)
+    
+    print(kategori_list)  
             
 
 if __name__ == '__main__':

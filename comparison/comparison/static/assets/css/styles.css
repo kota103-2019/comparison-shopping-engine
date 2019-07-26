@@ -59,3 +59,40 @@
 .price-original {
   text-decoration:line-through;
 }
+
+.dropdown-menu {
+  border-radius:10px;
+  box-shadow:5px 5px 10px -10px rgba(0,0,0,0.2);
+  border: none;
+}
+
+.compared-product {
+  border-radius:10px;
+  box-shadow:5px 5px 10px -10px rgba(0,0,0,0.2);
+  border: none;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  margin-right: 5px;
+  
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 5em;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+  border-radius: 5em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+  border-radius: 5em;
+}
