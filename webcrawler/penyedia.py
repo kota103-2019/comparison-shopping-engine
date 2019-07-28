@@ -17,6 +17,7 @@ if __name__ == '__main__':
         x = input("\nMasukan pilihan :")
         if x == '1':
             main.startCrawlAndIndex()
+            del main
         elif x == '2':
             #add kategori
             print("Data Kategori")
@@ -36,4 +37,5 @@ if __name__ == '__main__':
                 main.addCategory(True,no)
             del main
         elif x == '3':
+            del main
             end = True

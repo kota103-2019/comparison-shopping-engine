@@ -55,8 +55,8 @@ class kategori:
             print("2. Tokopedia")
             print("3. Lazada")
             print("4. Jd-ID")
-            print("\n9. Batalkan penambahan\n")
-            idOnlineMarketplace = int(input(":"))
+            print("9. Batalkan penambahan\n")
+            idOnlineMarketplace = int(input("pilihan:"))
             if idOnlineMarketplace > 4 or idOnlineMarketplace< 1 :
                 print("Pilihan tidak sesuai ! pilih diantara angka 1-4")
             elif idOnlineMarketplace == 9:
@@ -161,7 +161,7 @@ class mainPenyedia:
     def addCategory(self, newKat,pilihan):
         ktgr = kategori()
         if newKat :
-            namaKategori = str(input("Masukan nama Kategori baru!"))
+            namaKategori = str(input("Masukan nama Kategori baru!\n"))
             ktgr.addNewCategory(namaKategori)
             del ktgr
         else :
