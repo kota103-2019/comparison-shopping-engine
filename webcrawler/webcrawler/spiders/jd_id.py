@@ -13,6 +13,7 @@ class JdIdSpider(scrapy.Spider):
         db = client["comparison-shopping-engine"]
         kategori_collection = db["kategori"]
         # kota_collection = db["kota"]
+
         # urls = [
         #     "https://www.jd.id/category/jual-monitor-875061553.html",
         # ]
@@ -58,6 +59,7 @@ class JdIdSpider(scrapy.Spider):
             yield scrapy.Request(url=next_page, callback=self.parse, meta={
                         "kategori" : response.meta["kategori"]
                     })
+
 
     def parse_product(self, response):
         idkategori = response.meta["idkategori"]
