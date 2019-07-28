@@ -88,7 +88,8 @@ class BukalapakSpider(scrapy.Spider):
 
             #stock data in string format ex.'\n> 50 stok\n'
             #replace() for removing '\n'
-            product_object['stock'] = response.css('div.qa-pd-stock strong span::text').get().replace('\n','')
+            if response.css('div.qa-pd-stock strong span::text').get():
+                product_object['stock'] = response.css('div.qa-pd-stock strong span::text').get().replace('\n','')
         
             #set original price with the same value as final price
             product_object['price_original'] = float(price)

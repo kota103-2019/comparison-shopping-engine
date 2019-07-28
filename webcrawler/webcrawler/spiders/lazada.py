@@ -6,7 +6,7 @@
 #[]Seller Location
 #[]Seller Url
 #[]Seller Last Activity
-
+import time
 import scrapy, datetime, pymongo
 
 from webcrawler.items import ProductItem
@@ -21,36 +21,37 @@ class LazadaSpider(scrapy.Spider):
         for kategori in kategori_collection.find():
             for url_lazada in kategori["lazada"]:
                 if url_lazada:
-                    print(url_lazada+" awal")
-                    #pageNum = 1
-                    #end = False
-                    #while not end :
-                    #    print("masuk while")
-                     #   url = url_lazada +"?page="+str(pageNum)
-                        #if scrapy.Request(url=url_lazada,callback=self.parse_page):
-                        #    print(url+"masuk if")
-                    yield scrapy.Request(url=url_lazada, callback=self.parse, meta={
-                        'splash':{
-                            'args':{
-                                'html':1,
-                                'wait':1,
-                                # 'proxy':'http://10.10.0.6:3128',
-                            },
-                        },
-                        #"collection" : kota_collection,
-                        "idkategori":kategori["idkategori"],
-                        #"pageNum":pageNum
-                    })
-                        #     pageNum +=1
-                        # else:
-                        #     end = True
-                        #     break
+                    # print(url_lazada+" awal")
+                    pageNum = 1
+                    end = False
+                    while not end :
+                        print("masuk while")
+                        url = url_lazada +"?page="+str(pageNum)
+                        if scrapy.Request(url=url,callback=self.parse_page, meta={'splash':{'args':{'html':1,'wait':1,},},}):
+                            print(url+"masuk if")
+                            time.sleep(3)
+                            yield scrapy.Request(url=url, callback=self.parse, meta={
+                                'splash':{
+                                    'args':{
+                                        'html':1,
+                                        'wait':1,
+                                        # 'proxy':'http://10.10.0.6:3128',
+                                    },
+                                },
+                            "idkategori":kategori["idkategori"],
+                            #"collection" : kota_collection,
+                            })
+                            pageNum +=1
+                        else:
+                            end = True
+                            break
                     
     def parse(self, response):
         products = response.css("div.c1_t2i div.c2prKC div.c3KeDq div.c16H9d")
         idkategori = response.meta["idkategori"]
         
         for product_detail in products:
+            time.sleep(3)
             product_link = response.urljoin(product_detail.css("a::attr(href)").get())
             yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
                 'splash':{
@@ -129,7 +130,7 @@ class LazadaSpider(scrapy.Spider):
         #get seller location data in string format
         #convert into defined location data from location data in marketplace
         #seller = response.css('div.seller-link a::attr(href)')
-        product_object['seller'] = response.css('div.seller-name__wrapper div.seller-name__detail a::text')
+        product_object['seller'] = response.css('div.seller-name__wrapper div.seller-name__detail a::text').get()
         # product_object['seller_location'] = response
 
         #get seller last activity in string format
@@ -139,7 +140,7 @@ class LazadaSpider(scrapy.Spider):
         product_object['category'] = idkategori
         
         #description in string HTML format
-        product_object['description'] = response.css('div.html-content')
+        product_object['description'] = response.css('div.html-content').get()
         
         yield product_object
 
