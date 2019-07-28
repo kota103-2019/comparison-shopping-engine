@@ -9,14 +9,11 @@ except pymongo.errors.ServerSelectionTimeoutError as err:
 db = client["comparison-shopping-engine"]
 colInv = db["invertedIndex"]
 
-stopword = ['promo','jual','ready','laris','dijual','stock','terlaris','terbaik','stok','murah',
-            'kualitas','termurah','kwalitas','dan','atau'
-            ]
-
-def filterStopword(listWord:list ,stopword:list):
-    cleaned = [ token for token in listWord \
-                if not token in stopword]
-    return cleaned
+def preprocessingText(text):
+    text = text.lower()
+    text = text.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+    text = str(text).split()
+    return text 
 
 class skor :
     def __init__(self):
@@ -77,16 +74,18 @@ def phrase_query(key_tokenized,listDocId):
 print("Pencarian Test\n")
 key = str(input("Input kata kunci pencarian:"))
 start = time.process_time()
-key = key.lower()
-key = key.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
-key_tokenized = str(key).split()
+listWord = preprocessingText(key)
+
+# key = key.lower()
+# key = key.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+# key_tokenized = str(key).split()
 #key_tokenized = filterStopword(key_tokenized,stopword)
 #key_tokenized = nltk.word_tokenize(key)
 #for i in range(len(key_tokenized)):
 #    print("\n"+key_tokenized[i])
 
 listOfList = [] #untuk menampung list seluruh list doc_id hasil pencarian kata
-for word in key_tokenized:
+for word in listWord:
     print("\n"+word)
     # listOfList menampung 
     listOfList.append(one_word_query(word))
@@ -101,9 +100,9 @@ for i in intersectList: # hanya menggunakan doc_id yang mengandung seluruh kata 
     tempSkor.doc_id = i
     listSkor.append(tempSkor)
 
-if len(key_tokenized) > 1:
+if len(listWord) > 1:
     # phrase query
-    for i in phrase_query(key_tokenized,intersectList): # query untuk mengambil doc_id yang memuat 1 frase lengkap berurutan
+    for i in phrase_query(listWord,intersectList): # query untuk mengambil doc_id yang memuat 1 frase lengkap berurutan
    
         for j in listSkor:
             # print(j.doc_id)

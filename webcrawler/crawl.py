@@ -1,4 +1,4 @@
-import scrapy, nltk
+import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from webcrawler.spiders.bukalapak import BukalapakSpider
@@ -80,12 +80,12 @@ def title_indexing():
 def prosesCrawl():
     process = CrawlerProcess(get_project_settings())
     #process.crawl(BukalapakSpider)
-    #process.crawl(TokopediaSpider)
-    process.crawl(LazadaSpider)
+    process.crawl(TokopediaSpider)
+    #process.crawl(LazadaSpider)
     #process.crawl(JdIdSpider)
     process.start()
     print("\n\nPembuatan Index Product kembali")
-    colProducts.reindex()
+    #colProducts.reindex()
     print("\n\nPembuatan Inverted Index")
     #colInvIndx.drop()
     #title_indexing()
