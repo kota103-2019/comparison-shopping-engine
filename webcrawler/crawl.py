@@ -8,15 +8,6 @@ from webcrawler.spiders.jd_id import JdIdSpider
 
 from connection import colInvIndx, colProducts
 
-stopword = ['promo','jual','ready','laris','dijual','stock','terlaris','terbaik','stok','murah',
-            'kualitas','termurah','kwalitas'
-            ]
-
-def filterStopword(listWord:list ,stopword:list):
-    cleaned = [ token for token in listWord \
-                if not token in stopword]
-    return cleaned
-
 def title_indexing():
     for item in colProducts.find({}):
         # print(item['title'])

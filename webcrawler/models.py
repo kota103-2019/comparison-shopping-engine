@@ -1,14 +1,14 @@
-# import pymongo
+import scrapy
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
 
-# try:
-#     client = pymongo.MongoClient('mongodb://localhost:27017/')
-#     client.server_info()
-# except pymongo.errors.ServerSelectionTimeoutError as err:
-#     print(err)
-# db = client["comparison-shopping-engine"]
-# colKategori = db["kategori"]
+from webcrawler.spiders.bukalapak import BukalapakSpider
+from webcrawler.spiders.tokopedia import TokopediaSpider
+from webcrawler.spiders.lazada import LazadaSpider
+from webcrawler.spiders.jd_id import JdIdSpider
+
 from connection import colInvIndx, colProducts,colKategori
-#listKategori = colKategori.find()
+
 class kategori:
     def __init__(self):
         self.namaKategori = ""
@@ -18,9 +18,6 @@ class kategori:
         self.jdId = []
         
     def addNewTautan(self, idOnlineMarketplace,urlSumberData):
-        # print("\nMasukan tautan kategori !")
-        # tautan = str(input("\n:"))
-        #Pengecekan duplikasi tautan Kategori
         sudahAda = False
         nameOM = ''
         if idOnlineMarketplace == 1:
@@ -53,7 +50,6 @@ class kategori:
         tambah = True
         self.namaKategori = namaKategori
         while tambah:
-            #idOnlineMarketplace = kategori.pilihOnlineMarket()
             print("\nPilih Online Marketplace untuk ditambahkan tautannya")
             print("1. Bukalapak")
             print("2. Tokopedia")
@@ -106,7 +102,6 @@ class kategori:
         tambah = True
         self.idKategori = idKategori
         while tambah:
-            #idOnlineMarketplace = kategori.pilihOnlineMarket()
             print("\nPilih Online Marketplace untuk ditambahkan tautannya")
             print("1. Bukalapak")
             print("2. Tokopedia")
@@ -151,8 +146,18 @@ class mainPenyedia:
         self.listKategori = []
         for i in colKategori.find({},{"_id":1,"namakategori":1}):
             self.listKategori.append(i)
-        #self.listCrawler
+        self.listCrawler = []
+        self.listCrawler.append(BukalapakSpider)
+        self.listCrawler.append(TokopediaSpider)
+        self.listCrawler.append(LazadaSpider)
+        self.listCrawler.append(JdIdSpider)
     
+    def preprocessingText(self,text):
+        text = text.lower()
+        text = text.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+        text = str(text).split()
+        return text
+
     def addCategory(self, newKat,pilihan):
         ktgr = kategori()
         if newKat :
@@ -167,55 +172,42 @@ class mainPenyedia:
             ktgr.updateCategory(kat["_id"])
             del ktgr
     
-# def addCategory():
-#     newKat = kategori()
-#     newKat.namaKategori =input ("\nMasukan Nama Kategori:")
-#     tambah = True
-#     while tambah:
-#         #idOnlineMarketplace = kategori.pilihOnlineMarket()
-#         print("\nPilih Online Marketplace untuk ditambahkan tautannya")
-#         print("1. Bukalapak")
-#         print("2. Tokopedia")
-#         print("3. Lazada")
-#         print("4. Jd-ID")
-#         print("\n9. Batalkan penambahan\n")
-#         idOnlineMarketplace = int(input(":"))
-#         if idOnlineMarketplace > 4 or idOnlineMarketplace< 1 :
-#             print("Pilihan tidak sesuai ! pilih diantara angka 1-4")
-#         elif idOnlineMarketplace == 9:
-#             del newKat
-#             break
-#         else:
-#             newKat.addNewTautan(idOnlineMarketplace)
-#         print("\n Tambah tautan lagi? (y/n)")
-#         x = str(input("\n"))
-#         x.lower()
-#         if x =="n":
-#             tambah = False
-#         else:
-#             tambah = True
-#     newIdKat = "id"+newKat.namaKategori
-#     #penambahan idKategori pada kategori sebelumnya (untuk Tree)
-#     j = False
-#     tempIdKat = "PerlKantor"
-#     while j == False :
-#         tempKat = colKategori.find_one({"idkategori":tempIdKat})
-#         #jika next kategori NULL
-#         if not tempKat['next']:
-#             #update next dengan idKategori baru
-#             colKategori.update_one({"idkategori":tempIdKat},{ "$set": { "next":newIdKat} })
-#             break
-#         #jika tidak, lihat kategori next tsb
-#         else:
-#             tempIdKat = tempKat['next']
-#             j = True
-#     colKategori.insert_one({"namakategori" : newKat.namaKategori,
-#     "idkategori":newIdKat,
-#     "parentkategori":"",
-#     "firstchild":"",
-#     "next":"",
-#     "bukalapak":newKat.bukalapak,
-#     "tokopedia":newKat.tokopedia,
-#     "lazada":newKat.lazada,
-#     "jdId":newKat.jdId})    
-#     del newKat
+    def title_indexing(self):
+        for item in colProducts.find({}):        
+            title = str(item['title'])
+            listWord = self.preprocessingText(title)
+
+        for i in range(len(listWord)):    
+            existed_index = colInvIndx.find_one({'word' : listWord[i]})
+            if existed_index is None: 
+                data = {
+                    'word' : listWord[i],
+                    'index' : [{
+                        'doc_id' : item['_id'],
+                        'position' : i
+                    }]
+                }
+                colInvIndx.insert_one(data)
+            else:
+                new_index = {
+                    'doc_id' : item['_id'],
+                    'position' : i
+                }
+                colInvIndx.update_one(
+                    {'_id' : existed_index['_id']},
+                    {
+                        '$push' : {
+                            'index' : new_index
+                        }
+                    }
+                )
+    def startCrawlAndIndex(self):
+        process = CrawlerProcess(get_project_settings())
+        for spider in self.listCrawler:
+            process.crawl(spider)
+        process.start()
+        print("\n\nPembuatan Index Product kembali")
+        colProducts.reindex()
+        print("\n\nPembuatan Inverted Index")
+        colInvIndx.drop()
+        self.title_indexing()

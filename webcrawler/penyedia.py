@@ -1,4 +1,3 @@
-import crawl
 import time
 from models import kategori, mainPenyedia
 import pymongo
@@ -7,6 +6,7 @@ from connection import colKategori
 if __name__ == '__main__':
     end = False
     while end!=True:
+        main = mainPenyedia()
         print("\t**********************************************")
         print("\t***  Aplikasi Penyedia Data  ***")
         print("\t**********************************************")
@@ -16,13 +16,8 @@ if __name__ == '__main__':
         print("3. Keluar dari Aplikasi")
         x = input("\nMasukan pilihan :")
         if x == '1':
-            #start = time.process_time()
-            crawl.prosesCrawl()
-            #print(time.process_time() - start)
-            
-            #end = True
+            main.startCrawlAndIndex()
         elif x == '2':
-            main = mainPenyedia()
             #add kategori
             print("Data Kategori")
             j = 0
