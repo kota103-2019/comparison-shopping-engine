@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #[v]Location
 #[]Category is Not Dynamic
-import scrapy, datetime
+import scrapy, datetime , pymongo
 
 from webcrawler.items import ProductItem
 
@@ -9,46 +9,60 @@ class JdIdSpider(scrapy.Spider):
     name = 'jd.id'
 
     def start_requests(self):
-        # client = pymongo.MongoClient("mongodb://localhost:27017/")
-        # db = client["comparison-shopping-engine"]
+        client = pymongo.MongoClient("mongodb://localhost:27017/")
+        db = client["comparison-shopping-engine"]
+        kategori_collection = db["kategori"]
         # kota_collection = db["kota"]
 
-        urls = [
-            # "https://www.jd.id/category/jual-pc-875061492.html",
-            # "https://www.jd.id/category/jual-laptop-875061490.html",
-            "https://www.jd.id/category/jual-monitor-875061553.html",
-        ]
-
-        for url_item in urls:
-            yield scrapy.Request(url=url_item, callback=self.parse, meta={
-                "test" : "test123"
-            })
-
+        # urls = [
+        #     "https://www.jd.id/category/jual-monitor-875061553.html",
+        # ]
+        for kategori in kategori_collection.find():
+            for url_item in kategori["jdId"]:
+                if url_item :
+                    #print("KATEGORI ID"+ kategori["idkategori"])
+                    idkat = kategori["idkategori"]
+                    yield scrapy.Request(url=url_item, callback=self.parse, meta={
+                        "kategori" : kategori["idkategori"]
+                    })
+                    # yield scrapy.Request(url=url_item, callback=self.parse, meta={"kategori":kategori["idkategori"]})
+        # for kategori in kategori_collection.find():
+        #     for url_jdId in kategori["jdId"]:
+        #         #print(url_bukalapak)
+        #         if url_jdId:
+        #             print(kategori["idkategori"])
+        #             yield scrapy.Request(url=url_jdId, callback=self.parse, meta={"kategori":kategori["idkategori"]},)
 
     def parse(self, response):
-        data = response.meta["test"]
-        print(data)
-        # products = response.css('div.item div.p-desc')
-        # #follow each product links
-        # for product_detail in products:
-        #     product_link = response.urljoin(product_detail.css('a::attr(href)').get())
-        #     yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
-        #         'splash':{
-        #             'args':{
-        #                 'html':1,
-        #                 'proxy':'http://10.10.0.6:3128',
-        #             },
-        #         }
-        #     })
+        products = response.css('div.item div.p-desc')
+        #print(response.meta["kategori"])
+        # idkat = ""
+        idkat = response.meta["kategori"]
+        #print(idkat)
+        #follow each product links
+        for product_detail in products:
+            product_link = response.urljoin(product_detail.css('a::attr(href)').get())
+            yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
+                'splash':{
+                    'args':{
+                        'html':1,
+                        # 'proxy':'http://10.10.0.6:3128',
+                    },
+                },
+                "idkategori": idkat
+            })
         
-        # #go to the next page
-        # next_page_object = response.urljoin(response.css('div.pagination a.p-next::attr(href)').get())
-        # if(next_page_object is not None):
-        #     next_page = str(next_page_object)
-        #     yield scrapy.Request(url=next_page, callback=self.parse)
+        #go to the next page
+        next_page_object = response.urljoin(response.css('div.pagination a.p-next::attr(href)').get())
+        if(next_page_object is not None):
+            next_page = str(next_page_object)
+            yield scrapy.Request(url=next_page, callback=self.parse, meta={
+                        "kategori" : response.meta["kategori"]
+                    })
+
 
     def parse_product(self, response):
-
+        idkategori = response.meta["idkategori"]
 
         product_object = ProductItem()
         product_object['online_marketplace'] = self.name
@@ -125,7 +139,7 @@ class JdIdSpider(scrapy.Spider):
         #'Dsktp' = Desktop
         #'Lptop' : Laptop
         #'Mntr' : Monitor
-        product_object['category'] = 'Mntr'
+        product_object['category'] = idkategori
 
         #description in string HTML format
         # product_object['description'] = response

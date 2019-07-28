@@ -1,45 +1,76 @@
 # -*- coding: utf-8 -*-
 #[]Location
-#[]Category
 #[]Seller Information
 #   has separate scraper
 #[]Seller Name
 #[]Seller Location
 #[]Seller Url
 #[]Seller Last Activity
-
-import scrapy, datetime
+import time
+import scrapy, datetime, pymongo
 
 from webcrawler.items import ProductItem
 
 class LazadaSpider(scrapy.Spider):
     name = 'lazada'
-    
     def start_requests(self):
-        urls = [
-            'https://www.lazada.co.id/beli-laptop/?page=1&spm=a2o4j.home.cate_1.2.1dea4ceeVhW9Zw'
-        ]
-        for url_item in urls:
-            yield scrapy.Request(url=url_item, callback=self.parse, meta={
+        client = pymongo.MongoClient("mongodb://localhost:27017/")
+        db = client["comparison-shopping-engine"]
+        kategori_collection = db["kategori"]
+
+        for kategori in kategori_collection.find():
+            for url_lazada in kategori["lazada"]:
+                if url_lazada:
+                    # print(url_lazada+" awal")
+                    pageNum = 1
+                    end = False
+                    while not end :
+                        print("masuk while")
+                        url = url_lazada +"?page="+str(pageNum)
+                        if scrapy.Request(url=url,callback=self.parse_page, meta={'splash':{'args':{'html':1,'wait':1,},},}):
+                            print(url+"masuk if")
+                            time.sleep(3)
+                            yield scrapy.Request(url=url, callback=self.parse, meta={
+                                'splash':{
+                                    'args':{
+                                        'html':1,
+                                        'wait':1,
+                                        # 'proxy':'http://10.10.0.6:3128',
+                                    },
+                                },
+                            "idkategori":kategori["idkategori"],
+                            #"collection" : kota_collection,
+                            })
+                            pageNum +=1
+                        else:
+                            end = True
+                            break
+                    
+    def parse(self, response):
+        products = response.css("div.c1_t2i div.c2prKC div.c3KeDq div.c16H9d")
+        idkategori = response.meta["idkategori"]
+        
+        for product_detail in products:
+            time.sleep(3)
+            product_link = response.urljoin(product_detail.css("a::attr(href)").get())
+            yield scrapy.Request(url=product_link, callback=self.parse_product, meta={
                 'splash':{
                     'args':{
                         'html':1,
+                        'wait':1,
                         # 'proxy':'http://10.10.0.6:3128',
                     },
-                }
-            })
-
-    def parse(self, response):
-        products = response.css("div.c2prKC div.c3KeDq div.c16H9d")
-        #follow each product links
-        for product_detail in products:
-            product_link = response.urljoin(product_detail.css("a::attr(href)").get())
-            yield scrapy.Request(url=product_link, callback=self.parse_product)
+                },
+                "idkategori" : idkategori
+                } )
         
-        # next_page_object = response
+        
+        
 
     def parse_product(self, response):
+        idkategori = response.meta["idkategori"]
         product_object = ProductItem()
+        
         product_object['online_marketplace'] = self.name
         product_object['time_taken'] = datetime.datetime.now()
         product_object['url'] = response.url
@@ -98,15 +129,25 @@ class LazadaSpider(scrapy.Spider):
         
         #get seller location data in string format
         #convert into defined location data from location data in marketplace
+        #seller = response.css('div.seller-link a::attr(href)')
+        product_object['seller'] = response.css('div.seller-name__wrapper div.seller-name__detail a::text').get()
         # product_object['seller_location'] = response
 
         #get seller last activity in string format
         # product_object['last_activity'] = 
         
         #convert into defined category data from start url 
-        # product_object['category'] = response
+        product_object['category'] = idkategori
         
         #description in string HTML format
-        # product_object['description'] = response
+        product_object['description'] = response.css('div.html-content').get()
         
         yield product_object
+
+    def parse_page(self,response):
+        if response.css("div.c1_t2i div.c2prKC div.c3KeDq div.c16H9d").get() is not None :
+            print("parse page")
+            print(response.css("div.c1_t2i div.c2prKC div.c3KeDq div.c16H9d"))
+            return True
+        else:
+            return False
