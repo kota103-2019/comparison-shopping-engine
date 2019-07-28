@@ -9,7 +9,7 @@ import pymongo
 from scrapy.exporters import JsonItemExporter, JsonLinesItemExporter
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
-from scrapy import log
+# from scrapy import log
 
 class JsonPipeline(object):
     def __init__(self):
@@ -34,16 +34,11 @@ class JsonPipeline(object):
 #     def process_item(self, spider):
 
 class MongoDBPipeline(object):
-    
-
     def __init__(self):
-        client = pymongo.MongoClient(
-            settings['MONGODB_SERVER'],
-            settings['MONGODB_PORT']
-            )
+        client = pymongo.MongoClient("mongodb://localhost:27017/")
         # client = pymongo.MongoClient('mongodb+srv://KoTA-103:bismillah@cluster0-sr9cz.mongodb.net/test?retryWrites=true&w=majority')
-        db = client[settings['MONGODB_DATABASE']]
-        self.collection = db[settings['MONGODB_COLLECTION']]
+        db = client["comparison-shopping-engine"]
+        self.collection = db["products_lazada"]
     
     def process_item(self, item, spider):
         valid = True
@@ -52,7 +47,8 @@ class MongoDBPipeline(object):
                 valid = False
                 raise DropItem("Missing {0}!".format(data))
         if valid:
-            self.collection.insert(dict(item))
-            log.msg("Question added to MongoDB database!", level=log.DEBUG, spider=spider)
+            #self.collection.insert(dict(item))
+            self.collection.update({'url': item['url']}, dict(item), upsert=True)
+            # log.msg("Question added to MongoDB database!", level=log.DEBUG, spider=spider)
 
         return item

@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = 'webcrawler.spiders'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -28,7 +28,7 @@ ROBOTSTXT_OBEY = True
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+# DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -101,8 +101,8 @@ AUTOTHROTTLE_DEBUG = False
 
 #SCRAPY-SPLASH SETTINGS
 
-SPLASH_URL = "http://192.168.99.100:8050"
-
+#SPLASH_URL = "http://192.168.99.100:8050"
+SPLASH_URL = "http://localhost:8050"
 DOWNLOADER_MIDDLEWARES = {
    'scrapy_splash.SplashCookiesMiddleware': 723,
    'scrapy_splash.SplashMiddleware': 725,
@@ -114,10 +114,3 @@ SPIDER_MIDDLEWARES = {
 }
 
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
-
-#MONGO DB CONFIGURATION
-
-MONGODB_SERVER = 'localhost'
-MONGODB_PORT = 27017
-MONGODB_DATABASE = 'comparison-shopping-engine'
-MONGODB_COLLECTION = 'products'
