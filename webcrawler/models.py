@@ -148,13 +148,14 @@ class mainPenyedia:
             self.listKategori.append(i)
         self.listCrawler = []
         self.listCrawler.append(BukalapakSpider)
-        self.listCrawler.append(TokopediaSpider)
         self.listCrawler.append(LazadaSpider)
+        self.listCrawler.append(TokopediaSpider)
         self.listCrawler.append(JdIdSpider)
     
     def preprocessingText(self,text):
         text = text.lower()
-        text = text.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+        punct = '''!#$%&()*+,-/:;<=>?@[\]^_{|}~'''
+        text = text.translate(str.maketrans(punct,' '*len(punct),'''"'`'''))
         text = str(text).split()
         return text
 
@@ -166,7 +167,7 @@ class mainPenyedia:
             del ktgr
         else :
             print("update category")
-            print(pilihan)
+            #print(pilihan)
             kat = colKategori.find_one({"_id":pilihan})
             #print("update category", kat["namakategori"])
             ktgr.updateCategory(kat["_id"])
