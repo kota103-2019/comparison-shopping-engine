@@ -88,7 +88,7 @@ class kategori:
                         else:
                             tempIdKat = tempKat['next']
                             j = True
-                    colKategori.insert_one({"namakategori" : self.namaKategori,
+                            colKategori.insert_one({"namakategori" : self.namaKategori,
                         "idkategori":"id"+self.namaKategori,
                         "parentkategori":"",
                         "firstchild":"",
@@ -97,6 +97,7 @@ class kategori:
                         "tokopedia":self.tokopedia,
                         "lazada":self.lazada,
                         "jdId":self.jdId})
+                            print("Penambahan Kategori Selesai")
                 else:
                     tambah = True
         
@@ -139,6 +140,7 @@ class kategori:
                         }
                     }
                 )
+                print("Penambahan Kategori Selesai")
             else:
                 tambah = True
 
@@ -217,3 +219,4 @@ class mainPenyedia:
         print("\n\nPembuatan Inverted Index, Proses ini akan memakan waktu, tunggu sampai selesai")
         colInvIndx.drop()
         self.title_indexing()
+        print("Pengambilan Data dan pembuatan Index berhasil")
