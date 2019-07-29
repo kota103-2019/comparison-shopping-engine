@@ -175,33 +175,35 @@ class mainPenyedia:
     
     def title_indexing(self):
         for item in colProducts.find({}):        
+            listWord = []
             title = str(item['title'])
-            listWord = self.preprocessingText(title)
-
-        for i in range(len(listWord)):    
-            existed_index = colInvIndx.find_one({'word' : listWord[i]})
-            if existed_index is None: 
-                data = {
-                    'word' : listWord[i],
-                    'index' : [{
+            temp = (self.preprocessingText(title))
+            for i in temp:
+                listWord.append(i)
+            for i in range(len(listWord)):    
+                existed_index = colInvIndx.find_one({'word' : listWord[i]})
+                if existed_index is None: 
+                    data = {
+                        'word' : listWord[i],
+                        'index' : [{
+                            'doc_id' : item['_id'],
+                            'position' : i
+                        }]
+                    }
+                    colInvIndx.insert_one(data)
+                else:
+                    new_index = {
                         'doc_id' : item['_id'],
                         'position' : i
-                    }]
-                }
-                colInvIndx.insert_one(data)
-            else:
-                new_index = {
-                    'doc_id' : item['_id'],
-                    'position' : i
-                }
-                colInvIndx.update_one(
-                    {'_id' : existed_index['_id']},
-                    {
-                        '$push' : {
-                            'index' : new_index
-                        }
                     }
-                )
+                    colInvIndx.update_one(
+                        {'_id' : existed_index['_id']},
+                        {
+                            '$push' : {
+                                'index' : new_index
+                            }
+                        }
+                    )
     def startCrawlAndIndex(self):
         process = CrawlerProcess(get_project_settings())
         for spider in self.listCrawler:
