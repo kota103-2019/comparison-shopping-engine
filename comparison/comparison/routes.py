@@ -31,7 +31,7 @@ def search():
         page = request.args.get('page')
         if not page or int(page)<1:
             page = 1
-        listOfProduk, jmlprod = pencarian.mencariProdukByKataKunci(page_num=page)
+        listOfProduk = pencarian.mencariProdukByKataKunciRanked()
         infoHarga = InformasiHarga()
         infoHarga.listOfProduk = listOfProduk
         infoHarga.setInfoHarga()
@@ -39,7 +39,7 @@ def search():
         return render_template(
             'search.html', 
             kategori_list = kategori_data, 
-            jmlprod = jmlprod, 
+            jmlprod = 0, 
             listKota = pencarian.listKota, 
             kataKunci = pencarian.kataKunci,
             listOfProduk = listOfProduk, 
