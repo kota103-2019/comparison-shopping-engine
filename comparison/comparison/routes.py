@@ -28,10 +28,16 @@ def search():
         max_value = request.args.get('maximum')
         if max_value:
             pencarian.hargaMax = float(max_value)
+        sort_by = request.args.get('sort')
+        if sort_by:
+            pencarian.jenisSort = sort_by
+        sort_type = request.args.get('type')
+        if sort_type:
+            pencarian.caraSort = sort_type
         page = request.args.get('page')
         if not page or int(page)<1:
             page = 1
-        listOfProduk = pencarian.mencariProdukByKataKunciRanked()
+        listOfProduk, jmlprod = pencarian.mencariProdukByKataKunciRanked(page_num=page)
         infoHarga = InformasiHarga()
         infoHarga.listOfProduk = listOfProduk
         infoHarga.setInfoHarga()
@@ -39,7 +45,7 @@ def search():
         return render_template(
             'search.html', 
             kategori_list = kategori_data, 
-            jmlprod = 0, 
+            jmlprod = jmlprod, 
             listKota = pencarian.listKota, 
             kataKunci = pencarian.kataKunci,
             listOfProduk = listOfProduk, 
@@ -62,6 +68,12 @@ def searchCateg(idkat):
     max_value = request.args.get('maximum')
     if max_value:
         pencarian.hargaMax = float(max_value)
+    sort_by = request.args.get('sort')
+    if sort_by:
+        pencarian.jenisSort = sort_by
+    sort_type = request.args.get('type')
+    if sort_type:
+        pencarian.caraSort = sort_type
     page = request.args.get('page')
     if not page or int(page)<1:
         page = 1
@@ -69,13 +81,14 @@ def searchCateg(idkat):
     infoHarga = InformasiHarga()
     infoHarga.listOfProduk = listOfProduk
     infoHarga.setInfoHarga()
-    current_path = request.path + "/" + pencarian.idKategori
+    current_path = request.path + "?source=from_navbar"
+    kataKunci = kategori_object.getKategoriDetail(idkat)
     return render_template(
         'search.html', 
         kategori_list = kategori_data, 
         jmlprod = jmlprod, 
         listKota = pencarian.listKota, 
-        kataKunci = pencarian.idKategori, 
+        kataKunci = kataKunci['namakategori'], 
         listOfProduk = listOfProduk, 
         infoHarga = infoHarga, 
         byKategori = True,

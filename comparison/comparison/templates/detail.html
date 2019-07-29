@@ -31,7 +31,7 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        {% if produk.diskon|string != "0" or produk.diskon|string != "0.0" %}
+                        {% if produk.diskon|string != "0" and produk.diskon|string != "0.0" %}
                         <div class="discount" style="margin:5px 0px;">
                             <span class="badge badge-pill badge-danger d-inline">{{produk.diskon}} OFF</span>
                             <p class="d-inline price-original" style="margin-bottom:0px;margin-left:10px;font-size:16px;color:rgb(186,186,186);">{{"Rp {:,.2f}".format(produk.hargaAwalProduk)}}</p>
