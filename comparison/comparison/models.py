@@ -1,4 +1,4 @@
-import re, nltk, string, time, itertools
+import re, string, time, itertools
 from bson.objectid import ObjectId
 from comparison import app
 from .extensions import mongo
