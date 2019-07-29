@@ -57,46 +57,48 @@ class kategori:
             print("4. Jd-ID")
             print("9. Batalkan penambahan\n")
             idOnlineMarketplace = int(input("pilihan:"))
-            if idOnlineMarketplace > 4 or idOnlineMarketplace< 1 :
-                print("Pilihan tidak sesuai ! pilih diantara angka 1-4")
-            elif idOnlineMarketplace == 9:
+            if idOnlineMarketplace == 9:
                 #del newKat
                 break
+            elif idOnlineMarketplace > 4 or idOnlineMarketplace< 1 :
+                print("Pilihan tidak sesuai ! pilih diantara angka 1-4")
+            
+                #break
             else:
                 print("Masukan url Sumber data !")
                 urlSumberData = str(input())
                 #addNewTautan
                 self.addNewTautan(idOnlineMarketplace,urlSumberData)
-            print("\n Tambah tautan lagi? (y/n)")
-            x = str(input("\n"))
-            x.lower()
-            if x =="n":
-                tambah = False
-                #merubah id next pada kategori terakhir dengan id kategori baru
-                j = False
-                tempIdKat = "PerlKantor"
-                while j == False :
-                    tempKat = colKategori.find_one({"idkategori":tempIdKat})
-                    #jika next kategori NULL
-                    if not tempKat['next']:
-                        #update next dengan idKategori baru
-                        colKategori.update_one({"idkategori":tempIdKat},{ "$set": { "next":"id"+self.namaKategori} })
-                        break
-                    #jika tidak, lihat kategori next tsb
-                    else:
-                        tempIdKat = tempKat['next']
-                        j = True
-                colKategori.insert_one({"namakategori" : self.namaKategori,
-                    "idkategori":"id"+self.namaKategori,
-                    "parentkategori":"",
-                    "firstchild":"",
-                    "next":"",
-                    "bukalapak":self.bukalapak,
-                    "tokopedia":self.tokopedia,
-                    "lazada":self.lazada,
-                    "jdId":self.jdId})
-            else:
-                tambah = True
+                print("\n Tambah tautan lagi? (y/n)")
+                x = str(input("\n"))
+                x.lower()
+                if x =="n":
+                    tambah = False
+                    #merubah id next pada kategori terakhir dengan id kategori baru
+                    j = False
+                    tempIdKat = "PerlKantor"
+                    while j == False :
+                        tempKat = colKategori.find_one({"idkategori":tempIdKat})
+                        #jika next kategori NULL
+                        if not tempKat['next']:
+                            #update next dengan idKategori baru
+                            colKategori.update_one({"idkategori":tempIdKat},{ "$set": { "next":"id"+self.namaKategori} })
+                            break
+                        #jika tidak, lihat kategori next tsb
+                        else:
+                            tempIdKat = tempKat['next']
+                            j = True
+                    colKategori.insert_one({"namakategori" : self.namaKategori,
+                        "idkategori":"id"+self.namaKategori,
+                        "parentkategori":"",
+                        "firstchild":"",
+                        "next":"",
+                        "bukalapak":self.bukalapak,
+                        "tokopedia":self.tokopedia,
+                        "lazada":self.lazada,
+                        "jdId":self.jdId})
+                else:
+                    tambah = True
         
     def updateCategory(self,idKategori):
         tambah = True
@@ -204,6 +206,7 @@ class mainPenyedia:
                             }
                         }
                     )
+                colInvIndx.reindex()
     def startCrawlAndIndex(self):
         process = CrawlerProcess(get_project_settings())
         for spider in self.listCrawler:
@@ -211,6 +214,6 @@ class mainPenyedia:
         process.start()
         print("\n\nPembuatan Index Product kembali")
         colProducts.reindex()
-        print("\n\nPembuatan Inverted Index")
+        print("\n\nPembuatan Inverted Index, Proses ini akan memakan waktu, tunggu sampai selesai")
         colInvIndx.drop()
         self.title_indexing()
