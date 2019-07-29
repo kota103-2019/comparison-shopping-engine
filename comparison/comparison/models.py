@@ -1,8 +1,14 @@
+import re, nltk, string, time, itertools
 from bson.objectid import ObjectId
-import re
 from comparison import app
 from .extensions import mongo
 from statistics import median, mean
+
+
+class Skor :
+    def __init__(self):
+        self.doc_id = ObjectId()
+        self.nilaiSkor = int(1)
 
 class Produk:
     def __init__(self):
@@ -38,18 +44,6 @@ class Kategori:
     def __init__(self):
         self.kategoriDict = dict()
         self.kategoriList = list()
-
-    # def getKategori(self):
-    #     for parent in mongo.db.kategori.find({
-    #         "parentkategori" : ""
-    #     }):
-    #         self.kategoriDict[parent['namakategori']] = list()
-    #         for child in mongo.db.kategori.find({
-    #             "parentkategori" : parent['idkategori']
-    #         }):
-    #             self.kategoriDict[parent['namakategori']].append(child['namakategori'])
-        
-    #     return self.kategoriDict
 
     def getKategori(self):
         for parent in mongo.db.kategori.find({
@@ -165,6 +159,122 @@ class MainPencarian:
             return "", jml_produk
         else:
             return listOfProduk, jml_produk
+
+
+    def preprocessingText(self, key):
+        key = key.lower()
+        key = key.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+        key = str(key).split()
+        return key
+
+    # fungsi untuk mengambil list dari document id yang mengandung 1 kata 'word' pada judul produknya
+    def one_word_query(self, key):
+        index = mongo.db.inverted_index.find_one({"word":key},{'_id':1 ,'word':1,'index':1})
+        listWordIndx = []
+        if index:
+            for i in index["index"]:
+                listWordIndx.append(i['doc_id'])
+        return listWordIndx
+    # fungsi untuk mengambil list dari documen id yang mengandung 1 frase yang sudah di preprocessing secara lengkap dan berurutan pada judul produknya
+    def phrase_query(self, key_tokenized,listDocId):
+        result = []
+        for doc_id in listDocId:
+            temp = []
+            x = mongo.db.products.find_one({'_id':ObjectId(doc_id)})
+            print(x['title'])
+            for word in key_tokenized:
+                #ambil posisi
+                index = mongo.db.inverted_index.find_one({"word":word},{'index':1})
+                temp2 = []
+                for i in index['index']:
+                    if i['doc_id'] == doc_id:
+                        temp2.append(i['position'])
+                #tambahkan ke list
+                temp.append(temp2)
+            print(temp)
+            for i in range(len(temp)):
+                for ind in range(len(temp[i])):
+                    temp[i][ind] -= i
+            skr = 0
+
+            #while i < len(temp)-1:
+            for i in range(len(temp) - 1):
+                for j in range(len(temp[i])):
+                    #print("tempi "+str(temp[i]))
+                    #print(i)
+                    for k in range(len(temp[i+1])):
+                        if temp[i][j] == temp[i+1][k]:
+                            #print(temp[i][j]+" "+temp[i+1][j])
+                            skr+=1
+                #i+=1
+            rslt = Skor()
+            rslt.doc_id = doc_id
+            rslt.skor = skr
+            result.append(rslt)
+            # if set(temp[0]).intersection(*temp) :
+            #     result.append(doc_id)
+            #     print("frase sesuai dengan title")
+            
+        return result
+
+    def mencariProdukByKataKunciRanked(self, page_num = 0):
+        listWord = self.preprocessingText(self.kataKunci)
+        listOfList = [] #untuk menampung list seluruh list doc_id hasil pencarian kata
+        for word in listWord:
+            # print("\n"+word)
+            # listOfList menampung 
+            listOfList.append(self.one_word_query(word))
+        # Irisan dari semua List Index, untuk keperluan hanya mengambil document id yang mengandung seluruh kata pencarian
+        intersectList = set(listOfList[0]).intersection(*listOfList)
+
+        del listOfList
+
+        listSkor =[] # untuk menampung list list dari skor skor yang berisi doc_id dan skor untuk doc_id tsb
+        for i in intersectList: # hanya menggunakan doc_id yang mengandung seluruh kata pencarian
+            tempSkor = Skor()
+            tempSkor.doc_id = i
+            listSkor.append(tempSkor)
+
+        if len(listWord) > 1:
+            # phrase query
+            for i in self.phrase_query(listWord,intersectList): # query untuk mengambil doc_id yang memuat 1 frase lengkap berurutan
+        
+                for j in listSkor:
+                    # print(j.doc_id)
+                    # print(i.doc_id)
+                    if j.doc_id == i.doc_id:
+                        # print("skor sebelum :"+str(j.nilaiSkor))
+                        j.nilaiSkor += i.skor # untuk setiap doc_id yang memuat frase lengkap tambahkan skor 1
+                        # print("tambahan skor untuk :"+str(i.doc_id))
+                        # print("tambah skor menjadi :"+str(j.nilaiSkor))
+                        break
+        #sort skor berdasarkan nilaiSkor secara descending, untuk keperluan ranking
+        listSkor.sort(key=lambda x: x.nilaiSkor, reverse = True)
+        listOfProduk = [] 
+        for skor in listSkor:
+            i = mongo.db.products.find_one({'_id':ObjectId(skor.doc_id)})
+            ptemp = Produk()
+            ptemp.idProduk = ObjectId(i['_id'])
+            ptemp.namaLengkapProduk = str(i['title'])
+            ptemp.idKategori = str(i['category'])
+            ptemp.idKota = i['seller_location']
+            ptemp.namaToko = str(i['seller'])
+            ptemp.fotoProduk = str(i['image_url'])
+            ptemp.ratingProduk = i['rating']
+            ptemp.kondisiBarang = int(i['condition'])
+            ptemp.hargaAwalProduk = i['price_original']
+            ptemp.hargaAkhirProduk = i['price_final']
+            ptemp.idOnlineMarketplace = str(i['online_marketplace'])
+            ptemp.diskon = i['discount']
+            ptemp.deskripsi = str(i['description'])
+            ptemp.tautan = str(i['url'])
+            listOfProduk.append(ptemp)
+            del ptemp
+
+        if len(listOfProduk) < 1 :
+            return ""
+        else:
+            return listOfProduk
 
     def compare(self, listIdProduk):
         listIdProduk = [ObjectId(item) for item in listIdProduk]

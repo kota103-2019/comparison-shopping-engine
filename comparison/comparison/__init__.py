@@ -14,6 +14,9 @@ app = Flask(__name__)
 #app.config["MONGO_URI"] = "mongodb+srv://faiz:bismillah@cluster0-sr9cz.mongodb.net/test?retryWrites=true&w=majority"
 app.config["MONGO_URI"] = "mongodb://localhost:27017/comparison-shopping-engine"
 #app.json_encoder = JSONEncoder
+# mongo = PyMongo(app)
 mongo.init_app(app)
 
    #return app
+
+from comparison import routes
