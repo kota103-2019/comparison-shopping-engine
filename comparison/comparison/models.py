@@ -63,16 +63,22 @@ class Kategori:
             self.kategoriList.append(appender_dictionary)
         
         return self.kategoriList
+    
+    def getKategoriDetail(self, id):
+        return mongo.db.kategori.find_one({'idkategori' : id})
 
 class MainPencarian:
     #Initialization
     def __init__(self):
         self.kataKunci = ""
         self.idKategori = ""
+        self.filterKota = ""
         self.listIdProduk = []
         self.hargaMin = 0
         self.hargaMax = None
         self.listKota = []
+        self.jenisSort = ""
+        self.caraSort = ""
         for i in mongo.db.kota.find():
             pKota = Kota()
             pKota.idKota = i['idKota']
@@ -81,42 +87,42 @@ class MainPencarian:
             self.listKota.append(pKota)
             del pKota
 
-    def mencariProdukByKataKunci(self, page_num = 0):
-        key = self.kataKunci        
-        reString = ".*%s.*" % key # string untuk menampung query like untuk penggunaan regex
-        rgx = re.compile(reString, re.IGNORECASE) # mengcompile regex dengan menginore penggunaan Upper & Lower case
-        # filterQuery = {"title": rgx,"rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True } }
-        filterQuery = {"title": rgx}
-        if self.hargaMin > 0 and self.hargaMax > 0:
-            filterQuery = {"title": rgx, "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True }}
-        page_size = 15
-        skips = page_size * (int(page_num) - 1)
-        jml_produk = mongo.db.products.count_documents(filterQuery)
-        dataProduk = mongo.db.products.find(filterQuery).skip(skips).limit(page_size)
-        listOfProduk = []
-        for i in dataProduk:
-            ptemp = Produk()
-            ptemp.idProduk = ObjectId(i['_id'])
-            ptemp.namaLengkapProduk = str(i['title'])
-            ptemp.idKategori = str(i['category'])
-            ptemp.idKota = i['seller_location']
-            ptemp.namaToko = str(i['seller'])
-            ptemp.fotoProduk = str(i['image_url'])
-            ptemp.ratingProduk = i['rating']
-            ptemp.kondisiBarang = int(i['condition'])
-            ptemp.hargaAwalProduk = i['price_original']
-            ptemp.hargaAkhirProduk = i['price_final']
-            ptemp.idOnlineMarketplace = str(i['online_marketplace'])
-            ptemp.diskon = i['discount']
-            ptemp.deskripsi = str(i['description'])
-            ptemp.tautan = str(i['url'])
-            listOfProduk.append(ptemp)
-            del ptemp
+    # def mencariProdukByKataKunci(self, page_num = 0):
+    #     key = self.kataKunci        
+    #     reString = ".*%s.*" % key # string untuk menampung query like untuk penggunaan regex
+    #     rgx = re.compile(reString, re.IGNORECASE) # mengcompile regex dengan menginore penggunaan Upper & Lower case
+    #     # filterQuery = {"title": rgx,"rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True } }
+    #     filterQuery = {"title": rgx}
+    #     if self.hargaMin > 0 and self.hargaMax > 0:
+    #         filterQuery = {"title": rgx, "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True }}
+    #     page_size = 30
+    #     skips = page_size * (int(page_num) - 1)
+    #     jml_produk = mongo.db.products.count_documents(filterQuery)
+    #     dataProduk = mongo.db.products.find(filterQuery).skip(skips).limit(page_size)
+    #     listOfProduk = []
+    #     for i in dataProduk:
+    #         ptemp = Produk()
+    #         ptemp.idProduk = ObjectId(i['_id'])
+    #         ptemp.namaLengkapProduk = str(i['title'])
+    #         ptemp.idKategori = str(i['category'])
+    #         ptemp.idKota = i['seller_location']
+    #         ptemp.namaToko = str(i['seller'])
+    #         ptemp.fotoProduk = str(i['image_url'])
+    #         ptemp.ratingProduk = i['rating']
+    #         ptemp.kondisiBarang = int(i['condition'])
+    #         ptemp.hargaAwalProduk = i['price_original']
+    #         ptemp.hargaAkhirProduk = i['price_final']
+    #         ptemp.idOnlineMarketplace = str(i['online_marketplace'])
+    #         ptemp.diskon = i['discount']
+    #         ptemp.deskripsi = str(i['description'])
+    #         ptemp.tautan = str(i['url'])
+    #         listOfProduk.append(ptemp)
+    #         del ptemp
 
-        if len(listOfProduk) < 1 :
-            return "", 0
-        else:
-            return listOfProduk, jml_produk
+    #     if len(listOfProduk) < 1 :
+    #         return "", 0
+    #     else:
+    #         return listOfProduk, jml_produk
 
     def mencariProdukByKategori(self, isParent, page_num):
         listKategori = []
@@ -126,15 +132,22 @@ class MainPencarian:
         else:
             for item in mongo.db.kategori.find({"parentkategori" : self.idKategori}):
                 listKategori.append(item['idkategori'])
-
+        
         filterQuery = {"category": {"$in" : listKategori}}
-
         if self.hargaMin > 0 and self.hargaMax > 0:
-            filterQuery = {"category": {"$in" : listKategori} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True }}
-        page_size = 15
+            # filterQuery = {"category": {"$in" : listKategori} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True }}
+            filterQuery['price_final']['$gte'] = self.hargaMin
+            filterQuery['price_final']['$lte'] = self.hargaMax
+        page_size = 30
         skips = page_size * (int(page_num) - 1)
         jml_produk = mongo.db.products.count_documents(filterQuery)
-        dataProduk = mongo.db.products.find(filterQuery).skip(skips).limit(page_size)
+        print(self.jenisSort, self.caraSort, sep="/")
+        if self.jenisSort:
+            data = mongo.db.products.find(filterQuery).sort(str(self.jenisSort), int(self.caraSort))
+        else:
+            data = mongo.db.products.find(filterQuery)
+        # dataProduk = mongo.db.products.find(filterQuery).skip(skips).limit(page_size)
+        dataProduk = data.skip(skips).limit(page_size)
         listOfProduk = []
         for i in dataProduk:
             ptemp = Produk()
@@ -250,9 +263,19 @@ class MainPencarian:
                         break
         #sort skor berdasarkan nilaiSkor secara descending, untuk keperluan ranking
         listSkor.sort(key=lambda x: x.nilaiSkor, reverse = True)
+        listIdProduk = [ObjectId(item.doc_id) for item in listSkor]
+        filterQuery = {"_id": {"$in" : listIdProduk}}
         listOfProduk = [] 
-        for skor in listSkor:
-            i = mongo.db.products.find_one({'_id':ObjectId(skor.doc_id)})
+        page_size = 30
+        skips = page_size * (int(page_num) - 1)
+        jml_produk = mongo.db.products.count_documents(filterQuery)
+        if self.jenisSort:
+            data = mongo.db.products.find(filterQuery).sort(str(self.jenisSort), int(self.caraSort))
+        else:
+            data = mongo.db.products.find(filterQuery)
+        # dataProduk = mongo.db.products.find(filterQuery).skip(skips).limit(page_size)
+        dataProduk = data.skip(skips).limit(page_size)
+        for i in dataProduk:
             ptemp = Produk()
             ptemp.idProduk = ObjectId(i['_id'])
             ptemp.namaLengkapProduk = str(i['title'])
@@ -272,9 +295,9 @@ class MainPencarian:
             del ptemp
 
         if len(listOfProduk) < 1 :
-            return ""
+            return "", jml_produk
         else:
-            return listOfProduk
+            return listOfProduk, jml_produk
 
     def compare(self, listIdProduk):
         listIdProduk = [ObjectId(item) for item in listIdProduk]
