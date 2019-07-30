@@ -4,8 +4,7 @@
 
 <ol class="breadcrumb fixed-top" style="background-color:#f6e069;height:36px;padding:5px 16px;margin-top:56px;width:100%;margin-bottom:0;">
     <li class="breadcrumb-item"><a><span>Home</span></a></li>
-    <li class="breadcrumb-item"><a><span>Library</span></a></li>
-    <li class="breadcrumb-item"><a><span>Data</span></a></li>
+    <li class="breadcrumb-item"><a><span>Compare</span></a></li>
 </ol>
 <div class="result-head fixed-top" style="height:35px;background-color:#ffffff;width:100%;margin-top:92px;">
     <p class="text-left" style="height:inherit;padding:5px;padding-left:100px;">{{error}}</p>
@@ -15,36 +14,46 @@
     
     <div class="row">
         <div class="col" style="padding:0px 15px;">
-            <div class="price-information" style="padding:30px;height:150px;background-color:#ffffff;margin:10px 0px;">
+            <div class="price-information" style=" padding:20px;height:100px;width:750px;background-color:#ffffff;margin:10px auto;">
                 <div class="d-inline-block" style="margin:0px 10px;">
-                    <h3 style="font-size:20px;">Harga Terendah</h3>
+                    <h3 style="font-size:14px; color: slategray;">Harga Terendah</h3>
                     <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMin)}}</span></div>
                 <div class="d-inline-block" style="margin:0px 10px;">
-                    <h3 style="font-size:20px;">Harga Tertinggi</h3>
+                    <h3 style="font-size:14px; color: slategray;">Harga Tertinggi</h3>
                     <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMax)}}</span></div>
                 <div class="d-inline-block" style="margin:0px 10px;">
-                    <h3 style="font-size:20px;">Harga Rata-Rata</h3>
+                    <h3 style="font-size:14px; color: slategray;">Harga Rata-Rata</h3>
                     <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMean)}}</span></div>
                 <div class="d-inline-block" style="margin:0px 10px;">
-                    <h3 style="font-size:20px;">Harga Tengah</h3>
+                    <h3 style="font-size:14px; color: slategray;">Harga Tengah</h3>
                     <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMed)}}</span></div>
             </div>
         </div>
     </div>
     <div class="row">
-        {% for i in listOfProduk %}
-        <div class="col" style="margin:0px;">
-            <div class="card compared-product">
-                <img class="card-img-top w-100 d-block flex-wrap" src="{{ i.fotoProduk }}" alt="Avatar" style="height: 150px; width: 100px;">
-                                    
-                <div class="card-body">
-                    <h4 class="card-title" style="font-size: 18px">{{ i.namaLengkapProduk[0:28] }}. . .</h4>
-                    <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">{{ i.idKota }}</h6>
-                    <p class="card-text">{{ "Rp {:,.2f}".format(i.hargaAkhirProduk)}}</p>
+        <div class="col" style="margin:0px auto;">
+            <div style="margin: 0px auto; width: 1000px;">
+            {% for i in listOfProduk %}
+                <div class="card compared-product" style="margin: 0px 5px; max-width: 225px; display: inline-flex;">
+                    <img class="card-img-top w-100 d-block flex-wrap" src="{{ i.fotoProduk }}" alt="Avatar" style="height: 150px; width: 100px;">
+                                        
+                    <div class="card-body">
+                        
+                        <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">Judul Produk</h6>
+                        <h4 class="card-title" style="font-size: 16px;">{{ i.namaLengkapProduk }}</h4>
+                        <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">Lokasi</h6>
+                        <h4 class="card-title" style="font-size: 16px;">{{ i.idKota }}</h4>
+                        <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">Harga</h6>
+                        <h4 class="card-title" style="font-size: 16px;">{{ "Rp {:,.2f}".format(i.hargaAkhirProduk)}}</h4>
+                        <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">Pembaruan Terakhir</h6>
+                        <h4 class="card-title" style="font-size: 16px;">{{ i.updateTerakhir.strftime('%Y-%m-%d')}}</h4>
+                        <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">Deskripsi</h6>
+                        <p class="card-text" style="max-width: 250px;">{{i.deskripsi[0:100]}}...</p>
+                    </div>
                 </div>
+            {% endfor %}
             </div>
         </div>
-        {% endfor %} 
     </div>
     {% endif %}
 </div>
