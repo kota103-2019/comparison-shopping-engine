@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
@@ -158,7 +159,7 @@ class mainPenyedia:
     
     def preprocessingText(self,text):
         text = text.lower()
-        punct = '''!#$%&()*+,-/:;<=>?@[\]^_{|}~'''
+        punct = '''!#$%&()*+.,-/:;<=>?@[\]^_{|}~'''
         text = text.translate(str.maketrans(punct,' '*len(punct),'''"'`'''))
         text = str(text).split()
         return text
@@ -178,7 +179,8 @@ class mainPenyedia:
             del ktgr
     
     def title_indexing(self):
-        for item in colProducts.find({}):        
+        x = colProducts.find({})
+        for item in tqdm(x,total=x.count()):        
             listWord = []
             title = str(item['title'])
             temp = (self.preprocessingText(title))
