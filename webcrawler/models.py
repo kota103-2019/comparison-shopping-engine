@@ -8,7 +8,7 @@ from webcrawler.spiders.tokopedia import TokopediaSpider
 from webcrawler.spiders.lazada import LazadaSpider
 from webcrawler.spiders.jd_id import JdIdSpider
 
-from connection import colInvIndx, colProducts,colKategori
+from connection import colInvIndx, colProducts,colKategori, pymongo
 
 class kategori:
     def __init__(self):
@@ -221,4 +221,5 @@ class mainPenyedia:
         print("\n\nPembuatan Inverted Index, Proses ini akan memakan waktu, tunggu sampai selesai")
         colInvIndx.drop()
         self.title_indexing()
+        colInvIndx.create_index([("word", pymongo.DESCENDING)])
         print("Pengambilan Data dan pembuatan Index berhasil")

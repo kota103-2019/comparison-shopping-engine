@@ -70,10 +70,10 @@ def title_indexing():
 
 def prosesCrawl():
     process = CrawlerProcess(get_project_settings())
-    #process.crawl(BukalapakSpider)
+    process.crawl(BukalapakSpider)
     process.crawl(TokopediaSpider)
-    #process.crawl(LazadaSpider)
-    #process.crawl(JdIdSpider)
+    process.crawl(LazadaSpider)
+    process.crawl(JdIdSpider)
     process.start()
     print("\n\nPembuatan Index Product kembali")
     #colProducts.reindex()
