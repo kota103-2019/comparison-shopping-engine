@@ -17,7 +17,7 @@ class LazadaSpider(scrapy.Spider):
         db = client["comparison-shopping-engine"]
         kategori_collection = db["kategori"]
 
-        for kategori in kategori_collection.find({'idkategori':'Hp'}):
+        for kategori in kategori_collection.find({}):
             for url_lazada in kategori["lazada"]:
                 if url_lazada:
                     # print(url_lazada+" awal")
@@ -127,7 +127,7 @@ class LazadaSpider(scrapy.Spider):
         #seller = response.css('div.seller-link a::attr(href)')
         product_object['seller'] = response.css('div.seller-name__wrapper div.seller-name__detail a::text').get()
 
-        product_object['seller_url'] = response.css('div.seller-name__wrapper div.seller-name__detail a::href').get()
+        product_object['seller_url'] = response.css('div.seller-name__wrapper div.seller-name__detail a::attr(href)').get()
         #get seller location in string format
         product_object['seller_location'] = "Informasi tidak Ditemukan"
         #get seller last activity in string format

@@ -114,7 +114,7 @@ class JdIdSpider(scrapy.Spider):
         rating = response.css("div.scores span.number::text").get()
         if rating is not None:
             #convert into float format
-            product_object['rating'] = rating
+            product_object['rating'] = float(rating)
 
         #assumed product condition is new => 'Baru' = new_product
         new_product = 1

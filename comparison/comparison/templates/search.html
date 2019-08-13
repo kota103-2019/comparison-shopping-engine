@@ -2,42 +2,46 @@
 
 {% block content %}
 
-<ol class="breadcrumb fixed-top" style="background-color:#f6e069;height:36px;padding:5px 16px;margin-top:56px;width:100%;margin-bottom:0;">
+<ol class="breadcrumb fixed-top" style="background-color:#f6e069;height:35px; padding:5px 16px;margin-top:56px;width:100%;margin-bottom:0;font-size: 14px">
     <li class="breadcrumb-item"><a><span>Home</span></a></li>
     {% if byKategori %}
     <li class="breadcrumb-item"><a><span>Kategori</span></a></li>
+    <li class="breadcrumb-item"><a><span>{{kataKunci}}</span></a></li>
     {% else %}
     <li class="breadcrumb-item"><a><span>Keyword</span></a></li>
     <li class="breadcrumb-item"><a><span>"{{kataKunci}}"</span></a></li>
     {% endif %}
 </ol>
-<div class="result-head fixed-top" style="height:35px;background-color:#ffffff;width:100%;margin-top:92px;">
+<div class="result-head fixed-top" style="height:30px;background-color:#ffffff;width:100%;margin-top:85px;font-size: 14px">
     <p class="text-left" style="height:inherit;padding:5px;padding-left:100px;">"{{kataKunci}}" ditemukan ({{jmlprod}} item)</p>
 </div>
-<div class="container" style="margin:0px auto;padding:0px;margin-top:128px;">
+<div class="container" style="margin:0px auto;padding:0px;margin-top:120px;">
     <div class="row">
         <div class="col-xl-3" style="background-color:rgba(255,255,255,0);padding:0px;margin:0px;max-height:none;">
-            <div class="sidebar-content sidebar" style="background-color:rgb(255,255,255);padding:30px;margin:10px;max-height:none;height:400px;width:275px;">
+            <div class="sidebar-content sidebar" style="background-color:rgb(255,255,255);padding:30px;margin:5px;max-height:none;height:420px;width:275px;">
                 <h2 style="font-size:20px;">Filter</h2>
                 <hr>
                 <form>
                     <div class="form-group">
-                        <label style="margin-left:10px;font-weight:bold;">Harga</label>
-                        <input class="form-control" type="number" name="minimum" placeholder="Harga Minimum" style="margin:5px 0px;">
-                        <input class="form-control" type="number" name="maximum" placeholder="Harga Maksimum" style="margin:5px 0px;">
+                        <label style="margin-left:10px;font-weight:bold;">Harga Minimum</label>
+                        <input class="form-control" type="number" name="minimum" placeholder="Harga Minimum" style="margin:5px 0px;"
+                            value="{{hargaMin}}">
+                        <label style="margin-left:10px;font-weight:bold;">Harga Maksimum</label>
+                        <input class="form-control" type="number" name="maximum" placeholder="Harga Maksimum" style="margin:5px 0px;" 
+                            value="{{hargaMax}}">
                     </div>
                     <input type="hidden" name="query" value="{{kataKunci}}">
                     <div class="form-group">
                         <label style="margin-left:10px;font-weight:bold;">Lokasi</label>
                         <select class="form-control" name="location">
-                                <option value="" selected>Pilih Kota</option>
+                            <option value="" selected>Pilih Kota</option>
                             {% for kota in listKota %}
-                                <option value="{{kota.namaKota}}">{{kota.namaKota}}</option>
+                            <option value="{{kota.namaKota}}">{{kota.namaKota}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <hr>
-                    <button class="btn btn-outline-danger float-left" type="reset" style="margin:0px 10px;">Reset</button>
+                    <a class="btn btn-outline-danger float-left" href="/search?query={{kataKunci}}" style="margin:0px 10px;border: none">Reset</a>
                     <button class="btn btn-success float-right" type="submit" style="margin:0px 15px;">Terapkan</button>
                 </form>
             </div>
@@ -45,22 +49,22 @@
         <div class="col">
             <div class="row">
                 <div class="col" style="background-color:rgba(255,255,255,0);padding:0px;margin:0px;">
-                    <div class="price-information" style="background-color:#ffffff;margin:10px;padding:30px;">
+                    <div class="price-information" style="background-color:#ffffff;margin:5px;padding:20px;">
                         <h2 style="font-size:24px;">"{{kataKunci}}"</h2>
                         <div class="d-inline-block" style="margin:0px 10px;">
-                            <h3 style="font-size:20px;">Harga Terendah</h3>
+                            <h3 style="font-size:14px; color: slategray;">Harga Terendah</h3>
                             <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMin)}}</span>
                         </div>
                         <div class="d-inline-block" style="margin:0px 10px;">
-                            <h3 style="font-size:20px;">Harga Tertinggi</h3>
+                            <h3 style="font-size:14px; color: slategray;">Harga Tertinggi</h3>
                             <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMax)}}</span>
                         </div>
                         <div class="d-inline-block" style="margin:0px 10px;">
-                            <h3 style="font-size:20px;">Harga Rata-Rata</h3>
+                            <h3 style="font-size:14px; color: slategray;">Harga Rata-Rata</h3>
                             <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMean)}}</span>
                         </div>
                         <div class="d-inline-block" style="margin:0px 10px;">
-                            <h3 style="font-size:20px;">Harga Tengah</h3>
+                            <h3 style="font-size:14px; color: slategray;">Harga Tengah</h3>
                             <span style="font-size:20px;">{{"Rp {:,.2f}".format(infoHarga.hargaMed)}}</span>
                         </div>
                     </div>
@@ -68,21 +72,21 @@
             </div>
             <div class="row">
                 <div class="col" style="background-color:rgba(255,255,255,0);padding:0px;margin:0px;">
-                    <div class="product-list" style="margin:10px;padding:30px;background-color:#ffffff;max-width:inherit;">
+                    <div class="product-list" style="margin:5px;padding:30px;background-color:#ffffff;max-width:inherit;">
                         <form action="/compare"method='POST'>
                         <div style="padding:10px;">
-                            <button class="btn btn-primary" type="submit">Bandingkan</button>
-                            <div class="dropdown float-right">
+                            <button class="btn btn-primary" type="submit" style="margin-left: 40px;">Bandingkan</button>
+                            <div class="dropdown float-right" style="margin-right: 50px;">
                                 <button class="btn btn-outline-primary btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Urutkan</button>
                                 <div class="dropdown-menu" role="menu">
-                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=price_final&type=1">Paling Murah<i class="fa fa-sort-numeric-asc" style="float:right"></i></a>
-                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=price_final&type=-1">Paling Mahal<i class="fa fa-sort-numeric-desc" style="float:right"></i></a>
-                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=time_taken&type=1">Paling Lama<i class="fa fa-sort-numeric-asc" style="float:right"></i></a>
-                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=time_taken&type=-1">Paling Baru<i class="fa fa-sort-numeric-desc" style="float:right"></i></a>
+                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=price_final&type=1">Harga Ascending<i class="fa fa-sort-numeric-asc" style="float:right"></i></a>
+                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=price_final&type=-1">Harga Descending<i class="fa fa-sort-numeric-desc" style="float:right"></i></a>
+                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=time_taken&type=1">Tanggal Pembaruan Ascending<i class="fa fa-sort-numeric-asc" style="float:right"></i></a>
+                                    <a class="dropdown-item" role="presentation" href="{{current_path}}&sort=time_taken&type=-1">Tanggal Pembaruan Descending<i class="fa fa-sort-numeric-desc" style="float:right"></i></a>
                                 </div>
                             </div>
                         </div>
-                        <div style="margin:0px;padding:10px 10px;">
+                        <div style="margin:0px auto;padding:10px auto; margin-left: 40px">
                             {% for i in listOfProduk %}
                                 <div class="card d-inline-flex" style="margin:10px 5px;width:225px;height:390px;">
                                     <img class="card-img-top w-100 d-block flex-wrap" src="{{ i.fotoProduk }}" alt="Avatar" style="height: 150px; width: 100px;">
@@ -92,10 +96,10 @@
                                             <a href="/product?id={{i.idProduk}}" style="color:inherit">{{ i.namaLengkapProduk }}</a>
                                         </h4>
                                         <h6 class="text-muted card-subtitle mb-2" style="font-size: 14px">{{ i.idKota }}</h6>
-                                        <p class="card-text">{{ "Rp {:,.2f}".format(i.hargaAkhirProduk)}}</p>
-                                        
-                                        
+                                        <p class="card-text" style="font-size: 16px;margin-bottom: 5px; color: #514E00"><b>{{ "Rp {:,.2f}".format(i.hargaAkhirProduk)}}</b></p>
                                         <a class="card-link" href="{{i.tautan}}">Kunjungi {{i.idOnlineMarketplace}}</a>
+                                    </div>
+                                    <div class="card-footer">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="formCheck-1" name="checkproduct" value="{{i.idProduk}}">
                                             <label class="form-check-label" for="formCheck-1">Bandingkan</label>
@@ -106,6 +110,7 @@
                             {% endfor %}
                         </div>
                         </form>
+                        {# 
                         <nav class="float-right">
                             <ul class="pagination">
                                 <li class="page-item"><a class="page-link" aria-label="Previous" href="{{current_path}}&page={{page|int -1}}"><span aria-hidden="true">«</span></a></li>
@@ -117,6 +122,8 @@
                                 <li class="page-item"><a class="page-link" aria-label="Next" href="{{current_path}}&page={{page|int +1}}"><span aria-hidden="true">»</span></a></li>
                             </ul>
                         </nav>
+                         
+                        #}
                     </div>
                 </div>
             </div>

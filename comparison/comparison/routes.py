@@ -28,6 +28,9 @@ def search():
         max_value = request.args.get('maximum')
         if max_value:
             pencarian.hargaMax = float(max_value)
+        location = request.args.get('location')
+        if location:
+            pencarian.filterKota = location
         sort_by = request.args.get('sort')
         if sort_by:
             pencarian.jenisSort = sort_by
@@ -52,7 +55,9 @@ def search():
             infoHarga = infoHarga, 
             byKategori = False, 
             current_path = current_path, 
-            page=page
+            page = page,
+            hargaMin = infoHarga.hargaMin,
+            hargaMax = infoHarga.hargaMax,
             )
 
 @app.route("/category/<idkat>")
@@ -68,6 +73,9 @@ def searchCateg(idkat):
     max_value = request.args.get('maximum')
     if max_value:
         pencarian.hargaMax = float(max_value)
+    location = request.args.get('location')
+    if location:
+        pencarian.filterKota = location
     sort_by = request.args.get('sort')
     if sort_by:
         pencarian.jenisSort = sort_by
@@ -81,6 +89,7 @@ def searchCateg(idkat):
     infoHarga = InformasiHarga()
     infoHarga.listOfProduk = listOfProduk
     infoHarga.setInfoHarga()
+    # infoHarga = pencarian.infoHarga
     current_path = request.path + "?source=from_navbar"
     kataKunci = kategori_object.getKategoriDetail(idkat)
     return render_template(
@@ -93,10 +102,12 @@ def searchCateg(idkat):
         infoHarga = infoHarga, 
         byKategori = True,
         current_path = current_path, 
-        page=page
+        page = page,
+        hargaMin = infoHarga.hargaMin,
+        hargaMax = infoHarga.hargaMax,
         )
 
-@app.route("/compare")
+@app.route("/compare", methods = ['GET','POST'])
 def compare():
     if request.method == 'POST':
         listIdProduk = request.form.getlist('checkproduct')

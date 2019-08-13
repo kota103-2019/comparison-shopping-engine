@@ -75,17 +75,18 @@ class MainPencarian:
         self.filterKota = ""
         self.listIdProduk = []
         self.hargaMin = 0
-        self.hargaMax = None
+        self.hargaMax = 0
         self.listKota = []
         self.jenisSort = ""
         self.caraSort = ""
-        for i in mongo.db.kota.find():
-            pKota = Kota()
-            pKota.idKota = i['idKota']
-            pKota.idProvinsi = i['idProvinsi']
-            pKota.namaKota = i['namaKota']
-            self.listKota.append(pKota)
-            del pKota
+        # self.infoHarga = InformasiHarga()
+        # for i in mongo.db.kota.find():
+        #     pKota = Kota()
+        #     pKota.idKota = i['idKota']
+        #     pKota.idProvinsi = i['idProvinsi']
+        #     pKota.namaKota = i['namaKota']
+        #     self.listKota.append(pKota)
+        #     del pKota
 
     # def mencariProdukByKataKunci(self, page_num = 0):
     #     key = self.kataKunci        
@@ -136,8 +137,12 @@ class MainPencarian:
         filterQuery = {"category": {"$in" : listKategori}}
         if self.hargaMin > 0 and self.hargaMax > 0:
             # filterQuery = {"category": {"$in" : listKategori} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True }}
-            filterQuery['price_final']['$gte'] = self.hargaMin
-            filterQuery['price_final']['$lte'] = self.hargaMax
+            filterQuery = {"category": {"$in" : listKategori} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}}
+
+            if self.filterKota is not None:
+                filterQuery = {"category": {"$in" : listKategori} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "seller_location":self.filterKota}
+            # filterQuery['price_final']['$gte'] = self.hargaMin
+            # filterQuery['price_final']['$lte'] = self.hargaMax
         page_size = 30
         skips = page_size * (int(page_num) - 1)
         jml_produk = mongo.db.products.count_documents(filterQuery)
@@ -146,8 +151,25 @@ class MainPencarian:
             data = mongo.db.products.find(filterQuery).sort(str(self.jenisSort), int(self.caraSort))
         else:
             data = mongo.db.products.find(filterQuery)
+        # self.infoHarga.listOfProduk = data
+        # self.infoHarga.setInfoHarga()
         # dataProduk = mongo.db.products.find(filterQuery).skip(skips).limit(page_size)
-        dataProduk = data.skip(skips).limit(page_size)
+        # dataProduk = data.skip(skips).limit(page_size)
+        for i in mongo.db.products.aggregate([
+            {
+                "$match" : filterQuery
+            },
+            {
+                "$group" : {'_id' : '$seller_location'}
+            }
+        ]):
+            pKota = Kota()
+            pKota.namaKota = i['_id']
+            self.listKota.append(pKota)
+            del pKota
+        
+        dataProduk = data
+
         listOfProduk = []
         for i in dataProduk:
             ptemp = Produk()
@@ -264,7 +286,17 @@ class MainPencarian:
         #sort skor berdasarkan nilaiSkor secara descending, untuk keperluan ranking
         listSkor.sort(key=lambda x: x.nilaiSkor, reverse = True)
         listIdProduk = [ObjectId(item.doc_id) for item in listSkor]
+        filterQuery = dict()
         filterQuery = {"_id": {"$in" : listIdProduk}}
+        # filterQuery['_id']['$in'] = listIdProduk
+        if self.hargaMin > 0 and self.hargaMax > 0:
+            # filterQuery = {"_id": {"$in" : listIdProduk} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "rating":{ "$exists": True }, "price_original":{ "$exists": True },"discount":{ "$exists": True }}
+            filterQuery = {"_id": {"$in" : listIdProduk} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}}
+
+            if self.filterKota != "":
+                filterQuery = {"_id": {"$in" : listIdProduk} , "price_final":{"$gte":self.hargaMin,"$lte":self.hargaMax}, "seller_location":self.filterKota}
+            # filterQuery['price_final']['$gte'] = self.hargaMin
+            # filterQuery['price_final']['$lte'] = self.hargaMax
         listOfProduk = [] 
         page_size = 30
         skips = page_size * (int(page_num) - 1)
@@ -274,7 +306,22 @@ class MainPencarian:
         else:
             data = mongo.db.products.find(filterQuery)
         # dataProduk = mongo.db.products.find(filterQuery).skip(skips).limit(page_size)
-        dataProduk = data.skip(skips).limit(page_size)
+        # dataProduk = data.skip(skips).limit(page_size)
+        dataProduk = data
+
+        for i in mongo.db.products.aggregate([
+            {
+                "$match" : filterQuery
+            },
+            {
+                "$group" : {'_id' : '$seller_location'}
+            }
+        ]):
+            pKota = Kota()
+            pKota.namaKota = i['_id']
+            self.listKota.append(pKota)
+            del pKota
+
         for i in dataProduk:
             ptemp = Produk()
             ptemp.idProduk = ObjectId(i['_id'])
@@ -320,6 +367,7 @@ class MainPencarian:
             ptemp.diskon = i['discount']
             ptemp.deskripsi = str(i['description'])
             ptemp.tautan = str(i['url'])
+            ptemp.updateTerakhir = i['time_taken']
             listOfProduk.append(ptemp)
             del ptemp
 
