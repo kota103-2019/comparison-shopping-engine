@@ -32,6 +32,12 @@ cd webcrawler
 scrapy crawl spidername
 ```
 
+### How To Run Flask Server
+
+```
+cd comparison
+flask run
+```
 
 ## Built With
 
