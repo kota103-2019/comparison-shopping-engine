@@ -11,7 +11,8 @@ colInv = db["invertedIndex"]
 
 def preprocessingText(text):
     text = text.lower()
-    text = text.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+    punct = '''!#$%&()*+,-/:;<=>?@[\]^_{|}~'''
+    text = text.translate(str.maketrans(punct,' '*len(punct),'''"'`'''))
     text = str(text).split()
     return text 
 

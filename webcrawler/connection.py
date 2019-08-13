@@ -5,7 +5,7 @@ try:
     client.server_info()
 except pymongo.errors.ServerSelectionTimeoutError as err:
     print(err)
-db = client["comparison"]
+db = client["comparison-shopping-engine"]
 colKategori = db["kategori"]
 colProducts = db["products"]
 colInvIndx = db["invertedIndex"]

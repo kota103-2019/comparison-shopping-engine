@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
@@ -7,7 +8,7 @@ from webcrawler.spiders.tokopedia import TokopediaSpider
 from webcrawler.spiders.lazada import LazadaSpider
 from webcrawler.spiders.jd_id import JdIdSpider
 
-from connection import colInvIndx, colProducts,colKategori
+from connection import colInvIndx, colProducts,colKategori, pymongo
 
 class kategori:
     def __init__(self):
@@ -57,46 +58,49 @@ class kategori:
             print("4. Jd-ID")
             print("9. Batalkan penambahan\n")
             idOnlineMarketplace = int(input("pilihan:"))
-            if idOnlineMarketplace > 4 or idOnlineMarketplace< 1 :
-                print("Pilihan tidak sesuai ! pilih diantara angka 1-4")
-            elif idOnlineMarketplace == 9:
+            if idOnlineMarketplace == 9:
                 #del newKat
                 break
+            elif idOnlineMarketplace > 4 or idOnlineMarketplace< 1 :
+                print("Pilihan tidak sesuai ! pilih diantara angka 1-4")
+            
+                #break
             else:
                 print("Masukan url Sumber data !")
                 urlSumberData = str(input())
                 #addNewTautan
                 self.addNewTautan(idOnlineMarketplace,urlSumberData)
-            print("\n Tambah tautan lagi? (y/n)")
-            x = str(input("\n"))
-            x.lower()
-            if x =="n":
-                tambah = False
-                #merubah id next pada kategori terakhir dengan id kategori baru
-                j = False
-                tempIdKat = "PerlKantor"
-                while j == False :
-                    tempKat = colKategori.find_one({"idkategori":tempIdKat})
-                    #jika next kategori NULL
-                    if not tempKat['next']:
-                        #update next dengan idKategori baru
-                        colKategori.update_one({"idkategori":tempIdKat},{ "$set": { "next":"id"+self.namaKategori} })
-                        break
-                    #jika tidak, lihat kategori next tsb
-                    else:
-                        tempIdKat = tempKat['next']
-                        j = True
-                colKategori.insert_one({"namakategori" : self.namaKategori,
-                    "idkategori":"id"+self.namaKategori,
-                    "parentkategori":"",
-                    "firstchild":"",
-                    "next":"",
-                    "bukalapak":self.bukalapak,
-                    "tokopedia":self.tokopedia,
-                    "lazada":self.lazada,
-                    "jdId":self.jdId})
-            else:
-                tambah = True
+                print("\n Tambah tautan lagi? (y/n)")
+                x = str(input("\n"))
+                x.lower()
+                if x =="n":
+                    tambah = False
+                    #merubah id next pada kategori terakhir dengan id kategori baru
+                    j = False
+                    tempIdKat = "PerlKantor"
+                    while j == False :
+                        tempKat = colKategori.find_one({"idkategori":tempIdKat})
+                        #jika next kategori NULL
+                        if not tempKat['next']:
+                            #update next dengan idKategori baru
+                            colKategori.update_one({"idkategori":tempIdKat},{ "$set": { "next":"id"+self.namaKategori} })
+                            break
+                        #jika tidak, lihat kategori next tsb
+                        else:
+                            tempIdKat = tempKat['next']
+                            j = True
+                            colKategori.insert_one({"namakategori" : self.namaKategori,
+                        "idkategori":"id"+self.namaKategori,
+                        "parentkategori":"",
+                        "firstchild":"",
+                        "next":"",
+                        "bukalapak":self.bukalapak,
+                        "tokopedia":self.tokopedia,
+                        "lazada":self.lazada,
+                        "jdId":self.jdId})
+                            print("Penambahan Kategori Selesai")
+                else:
+                    tambah = True
         
     def updateCategory(self,idKategori):
         tambah = True
@@ -137,6 +141,7 @@ class kategori:
                         }
                     }
                 )
+                print("Penambahan Kategori Selesai")
             else:
                 tambah = True
 
@@ -148,13 +153,14 @@ class mainPenyedia:
             self.listKategori.append(i)
         self.listCrawler = []
         self.listCrawler.append(BukalapakSpider)
-        self.listCrawler.append(TokopediaSpider)
         self.listCrawler.append(LazadaSpider)
+        self.listCrawler.append(TokopediaSpider)
         self.listCrawler.append(JdIdSpider)
     
     def preprocessingText(self,text):
         text = text.lower()
-        text = text.translate(str.maketrans('','','''!"#$%&'()*+,-/:;<=>?@[\]^_`{|}~'''))
+        punct = '''!#$%&()*+.,-/:;<=>?@[\]^_{|}~'''
+        text = text.translate(str.maketrans(punct,' '*len(punct),'''"'`'''))
         text = str(text).split()
         return text
 
@@ -166,41 +172,45 @@ class mainPenyedia:
             del ktgr
         else :
             print("update category")
-            print(pilihan)
+            #print(pilihan)
             kat = colKategori.find_one({"_id":pilihan})
             #print("update category", kat["namakategori"])
             ktgr.updateCategory(kat["_id"])
             del ktgr
     
     def title_indexing(self):
-        for item in colProducts.find({}):        
+        x = colProducts.find({})
+        for item in tqdm(x,total=x.count()):        
+            listWord = []
             title = str(item['title'])
-            listWord = self.preprocessingText(title)
-
-        for i in range(len(listWord)):    
-            existed_index = colInvIndx.find_one({'word' : listWord[i]})
-            if existed_index is None: 
-                data = {
-                    'word' : listWord[i],
-                    'index' : [{
+            temp = (self.preprocessingText(title))
+            for i in temp:
+                listWord.append(i)
+            for i in range(len(listWord)):    
+                existed_index = colInvIndx.find_one({'word' : listWord[i]})
+                if existed_index is None: 
+                    data = {
+                        'word' : listWord[i],
+                        'index' : [{
+                            'doc_id' : item['_id'],
+                            'position' : i
+                        }]
+                    }
+                    colInvIndx.insert_one(data)
+                else:
+                    new_index = {
                         'doc_id' : item['_id'],
                         'position' : i
-                    }]
-                }
-                colInvIndx.insert_one(data)
-            else:
-                new_index = {
-                    'doc_id' : item['_id'],
-                    'position' : i
-                }
-                colInvIndx.update_one(
-                    {'_id' : existed_index['_id']},
-                    {
-                        '$push' : {
-                            'index' : new_index
-                        }
                     }
-                )
+                    colInvIndx.update_one(
+                        {'_id' : existed_index['_id']},
+                        {
+                            '$push' : {
+                                'index' : new_index
+                            }
+                        }
+                    )
+                colInvIndx.reindex()
     def startCrawlAndIndex(self):
         process = CrawlerProcess(get_project_settings())
         for spider in self.listCrawler:
@@ -208,6 +218,8 @@ class mainPenyedia:
         process.start()
         print("\n\nPembuatan Index Product kembali")
         colProducts.reindex()
-        print("\n\nPembuatan Inverted Index")
+        print("\n\nPembuatan Inverted Index, Proses ini akan memakan waktu, tunggu sampai selesai")
         colInvIndx.drop()
         self.title_indexing()
+        colInvIndx.create_index([("word", pymongo.DESCENDING)])
+        print("Pengambilan Data dan pembuatan Index berhasil")
