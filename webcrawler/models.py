@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
@@ -7,7 +8,7 @@ from webcrawler.spiders.tokopedia import TokopediaSpider
 from webcrawler.spiders.lazada import LazadaSpider
 from webcrawler.spiders.jd_id import JdIdSpider
 
-from connection import colInvIndx, colProducts,colKategori
+from connection import colInvIndx, colProducts,colKategori, pymongo
 
 class kategori:
     def __init__(self):
@@ -158,7 +159,7 @@ class mainPenyedia:
     
     def preprocessingText(self,text):
         text = text.lower()
-        punct = '''!#$%&()*+,-/:;<=>?@[\]^_{|}~'''
+        punct = '''!#$%&()*+.,-/:;<=>?@[\]^_{|}~'''
         text = text.translate(str.maketrans(punct,' '*len(punct),'''"'`'''))
         text = str(text).split()
         return text
@@ -178,7 +179,8 @@ class mainPenyedia:
             del ktgr
     
     def title_indexing(self):
-        for item in colProducts.find({}):        
+        x = colProducts.find({})
+        for item in tqdm(x,total=x.count()):        
             listWord = []
             title = str(item['title'])
             temp = (self.preprocessingText(title))
@@ -219,4 +221,5 @@ class mainPenyedia:
         print("\n\nPembuatan Inverted Index, Proses ini akan memakan waktu, tunggu sampai selesai")
         colInvIndx.drop()
         self.title_indexing()
+        colInvIndx.create_index([("word", pymongo.DESCENDING)])
         print("Pengambilan Data dan pembuatan Index berhasil")
