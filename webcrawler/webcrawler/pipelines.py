@@ -38,7 +38,7 @@ class MongoDBPipeline(object):
         client = pymongo.MongoClient("mongodb://localhost:27017/")
         # client = pymongo.MongoClient('mongodb+srv://KoTA-103:bismillah@cluster0-sr9cz.mongodb.net/test?retryWrites=true&w=majority')
         db = client["comparison-shopping-engine"]
-        self.collection = db["products_lazada"]
+        self.collection = db["products"]
     
     def process_item(self, item, spider):
         valid = True

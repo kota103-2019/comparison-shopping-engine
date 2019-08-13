@@ -8,13 +8,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename ='assets/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename ='assets/fonts/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/styles.css') }}">
-
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Tajawal:600&display=swap');
+    </style>
 </head>
 
 <body style="background-color:#faf9f9;">
     <nav class="navbar navbar-light navbar-expand fixed-top" id="my-navbar" style="background-color:#ffee54;width:100%;margin-top:0;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/" style="margin:0px 0px;width:10%;padding:5px 0px;margin-left:50px;">CSW</a>
+            <a class="navbar-brand" href="/" style="width:10%;padding:5px 0px;margin-left:50px;"><img src="{{ url_for('static', filename ='logo.png') }}" alt=""></a>
                 <button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1">
                     <span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span>
                 </button>
@@ -22,7 +24,7 @@
                 <ul class="nav navbar-nav" style="width:10%;padding:0;">
                     <li class="dropdown">
                         <!-- <a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#" style="margin:0px 0px;">kategori</a> -->
-                        <button class="btn btn-outline-warning btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="color:#494949; border: none;">kategori</button>
+                        <button class="btn btn-outline-warning btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button" style="color:#494949; border: none; margin-left: 10px">kategori</button>
                         <div class="dropdown-menu" role="menu" style="max-height: 500px; overflow-y: scroll; overflow-x: hidden;">
                             <!-- <a class="dropdown-item" role="presentation" href="#">First Item</a> -->
                             {% for item in kategori_list %}
@@ -49,6 +51,9 @@
 
     {% block content %}
     {% endblock %}
+    <footer style="background-color:#ffee54;height:30px;margin-bottom:0px;">
+        <p class="text-center" style="margin:0px auto; font-size: 14px;padding: 5px;">Kelompok TA 103 <i class="fa fa-graduation-cap"></i></p>
+    </footer>
 
     <script src="{{ url_for('static', filename ='assets/js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename ='assets/bootstrap/js/bootstrap.min.js') }}"></script>

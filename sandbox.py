@@ -8,7 +8,7 @@ import time
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["comparison-shopping-engine"]
-product_collection = db["products"]
+product_collection = db["products_2"]
 kota_collection = db["kota"]
 index_collection = db["inverted_index_2"]
 kategori_collection = db["kategori"]
@@ -117,9 +117,9 @@ if __name__ == '__main__':
 
     # print('hello world')
     # replace_kota_to_defined_kota()
-    # title_indexing()
+    title_indexing()
     # print(string.punctuation)
-    print_category()
+    # print_category()
     
 
 

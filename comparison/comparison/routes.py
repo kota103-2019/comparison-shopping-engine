@@ -28,10 +28,19 @@ def search():
         max_value = request.args.get('maximum')
         if max_value:
             pencarian.hargaMax = float(max_value)
+        location = request.args.get('location')
+        if location:
+            pencarian.filterKota = location
+        sort_by = request.args.get('sort')
+        if sort_by:
+            pencarian.jenisSort = sort_by
+        sort_type = request.args.get('type')
+        if sort_type:
+            pencarian.caraSort = sort_type
         page = request.args.get('page')
         if not page or int(page)<1:
             page = 1
-        listOfProduk, jmlprod = pencarian.mencariProdukByKataKunci(page_num=page)
+        listOfProduk, jmlprod = pencarian.mencariProdukByKataKunciRanked(page_num=page)
         infoHarga = InformasiHarga()
         infoHarga.listOfProduk = listOfProduk
         infoHarga.setInfoHarga()
@@ -46,7 +55,9 @@ def search():
             infoHarga = infoHarga, 
             byKategori = False, 
             current_path = current_path, 
-            page=page
+            page = page,
+            hargaMin = infoHarga.hargaMin,
+            hargaMax = infoHarga.hargaMax,
             )
 
 @app.route("/category/<idkat>")
@@ -62,6 +73,15 @@ def searchCateg(idkat):
     max_value = request.args.get('maximum')
     if max_value:
         pencarian.hargaMax = float(max_value)
+    location = request.args.get('location')
+    if location:
+        pencarian.filterKota = location
+    sort_by = request.args.get('sort')
+    if sort_by:
+        pencarian.jenisSort = sort_by
+    sort_type = request.args.get('type')
+    if sort_type:
+        pencarian.caraSort = sort_type
     page = request.args.get('page')
     if not page or int(page)<1:
         page = 1
@@ -69,21 +89,25 @@ def searchCateg(idkat):
     infoHarga = InformasiHarga()
     infoHarga.listOfProduk = listOfProduk
     infoHarga.setInfoHarga()
-    current_path = request.path + "/" + pencarian.idKategori
+    # infoHarga = pencarian.infoHarga
+    current_path = request.path + "?source=from_navbar"
+    kataKunci = kategori_object.getKategoriDetail(idkat)
     return render_template(
         'search.html', 
         kategori_list = kategori_data, 
         jmlprod = jmlprod, 
         listKota = pencarian.listKota, 
-        kataKunci = pencarian.idKategori, 
+        kataKunci = kataKunci['namakategori'], 
         listOfProduk = listOfProduk, 
         infoHarga = infoHarga, 
         byKategori = True,
         current_path = current_path, 
-        page=page
+        page = page,
+        hargaMin = infoHarga.hargaMin,
+        hargaMax = infoHarga.hargaMax,
         )
 
-@app.route("/compare")
+@app.route("/compare", methods = ['GET','POST'])
 def compare():
     if request.method == 'POST':
         listIdProduk = request.form.getlist('checkproduct')

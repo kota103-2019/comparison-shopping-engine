@@ -72,6 +72,30 @@
   border: none;
 }
 
+.home-shape {
+  /* Rectangle */
+
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  left: 500px;
+  top: 138px;
+
+  background: linear-gradient(313.05deg, #FFEE54 0%, #FFF8B7 78.86%);
+  border-radius: 88px;
+  transform: rotate(35deg);
+  z-index: -1;
+}
+
+footer {
+  bottom:0;
+  left:0;
+  right:0;
+  position:fixed;
+}
+
+
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
